@@ -29,6 +29,12 @@ Attraction can gather nearly the whole compact pile in one pass. Human testers m
 
 ### Reviewed assembly evidence
 
+### Publication verification
+
+Public play URL: https://dumb-tony.github.io/magnet/. GitHub Pages workflow run `34739473385` successfully deployed implementation commit `0b5844f`. The same Chrome browser regression was then run against the public HTTPS URL: start/keyboard collection, pause/focus/restart, heavy and compact complete deliveries, and narrow traversal to anchor all passed with zero JavaScript errors. The initial sandbox network-denied attempt was retried with authorized network access; it was not a deployment failure. This publication note changes no playable code.
+
+### Screenshots
+
 ![Compact physical assembly](images/compact-assembly.png)
 
 ![Heavy block delivery through wide route](images/heavy-delivery.png)
