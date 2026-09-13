@@ -81,6 +81,35 @@ const DetailedModels=(()=>{
    cylinder(g,C.steel,0,0,0,.055,3);cylinder(g,C.iron,0,-1.48,0,.18,.04);block(g,C.cream,0,1.35,0,1.8,.7,.08,.04);tag(g,'MAIN ST|→ CITY',0,1.35,.046,1.72,.63,0,'dark');for(let y of [1.13,1.56])rivets(g,0,y,.06,1,.1);for(let y=-1.2;y<1;y+=.18){const m=cylinder(g,C.iron,0,y,.055,.009,.004);m.rotation.x=Math.PI/2;}
   }
   if(['car','van','bus','truck','tram'].includes(kind))vehicle(g,kind);
+  if(kind==='toolbox'){block(g,C.paint,0,0,0,.8,.4,.42,.04);block(g,C.paint,0,.24,0,.82,.09,.44,.03);for(let x of [-.2,.2])block(g,C.steel,x,.08,.23,.07,.14,.035,.01,'steel');rod(g,C.iron,[-.18,.4,0],[.18,.4,0],.027);for(let x of [-.18,.18])rod(g,C.iron,[x,.28,0],[x,.4,0],.02);tag(g,'FORGE',0,-.06,.216,.35,.13,0,'dark');}
+  if(kind==='drill'){block(g,C.yellow,0,.12,0,.23,.24,.4,.05);block(g,C.iron,0,-.12,.08,.15,.3,.15,.03,'rubber');block(g,C.yellow,0,-.3,.08,.26,.1,.23,.02);const chuck=cylinder(g,C.steel,0,.12,-.27,.075,.16);chuck.rotation.x=Math.PI/2;rod(g,C.steel,[0,.12,-.35],[0,.12,-.55],.02);for(let z of [-.1,0,.1])block(g,C.iron,.119,.15,z,.012,.075,.035);}
+  if(kind==='vending'){block(g,C.paint,0,0,0,1.1,2,.8,.07);block(g,C.iron,-.16,.2,.412,.68,1.35,.025,.025);for(let y of [-.2,.2,.6])for(let x of [-.37,-.1,.17]){cylinder(g,C.cream,x,y,.44,.085,.2,'paint');}block(g,C.iron,0,-.73,.42,.74,.18,.09,.03);for(let y of [.1,.3,.5])cylinder(g,C.steel,.41,y,.43,.035,.01).rotation.x=Math.PI/2;tag(g,'COLD|DRINKS',0,.84,.411,.8,.24,0,'dark');}
+  if(kind==='trafficlight'){rod(g,C.iron,[0,-2,0],[0,2,0],.075);rod(g,C.iron,[0,1.9,0],[1.3,1.9,0],.07);block(g,C.iron,1.3,1.3,0,.43,1.3,.3,.07);for(const [i,color] of [C.red,C.yellow,C.teal].entries()){const m=cylinder(g,color,1.3,1.7-i*.4,.18,.14,.04,'paint');m.rotation.x=Math.PI/2;ring(g,C.iron,1.3,1.7-i*.4,.2,.15,.023);}cylinder(g,C.iron,0,-1.95,0,.32,.15);}
+  if(kind==='excavator'){
+   for(let x of [-1.1,1.1]){block(g,C.iron,x,-.8,0,.7,.7,3.4,.2);for(let z=-1.3;z<1.5;z+=.43)tire(g,x,-.8,z,.32,.65);for(let z=-1.5;z<1.6;z+=.22)block(g,C.steel,x,-.43,z,.74,.07,.08);}
+   cylinder(g,C.iron,0,-.22,0,1,.24);block(g,C.yellow,0,.23,.35,2.4,.7,2.8,.1);block(g,C.iron,-.65,1.05,.25,1.15,1.1,1.5,.07);block(g,C.glass,-.65,1.2,-.52,.92,.65,.035,.025,'glass');block(g,C.yellow,-.65,1.66,.25,1.25,.13,1.6,.03);
+   for(let x of [-1.23,-.07])block(g,C.glass,x,1.2,.25,.02,.65,1.1,.02,'glass');for(let z of [.6,.85,1.1])block(g,C.iron,.4,.6,z,.8,.035,.1);for(let x of [.3,.7]){rod(g,C.yellow,[x,.5,-.6],[x,3.3,-2.4],.17,'paint');rod(g,C.yellow,[x,3.3,-2.4],[x,.4,-4.1],.14,'paint');rod(g,C.steel,[x,.7,-1.2],[x,2.7,-2.4],.065);}
+   block(g,C.iron,.5,.1,-4.15,1.3,.7,.9,.07);for(let x of [0,.3,.6,.9])block(g,C.steel,x,-.25,-4.65,.14,.15,.3);tag(g,'FORGE|EX-20',1.21,.2,.4,1.2,.45,Math.PI/2,'dark');
+  }
+  if(kind==='tankcar'||kind==='locomotive'){
+   const loco=kind==='locomotive',L=loco?12:10;block(g,C.iron,0,-1,0,2.8,.4,L,.06);for(let x of [-1.25,1.25])for(let z of [-L*.37,-L*.26,L*.26,L*.37])tire(g,x,-1.35,z,.45,.25);
+   for(let z of [-L/2-.3,L/2+.3])block(g,C.steel,0,-1,z,.25,.25,.6,.03,'steel');
+   if(!loco){const tank=cylinder(g,C.cream,0,.6,0,1.5,8.8,'paint',32);tank.rotation.x=Math.PI/2;for(let z of [-3.8,0,3.8])ring(g,C.iron,0,.6,z,1.52,.035);cylinder(g,C.iron,0,2.16,0,.42,.2);for(let x of [-.3,.3])rod(g,C.steel,[x,-.7,1.55],[x,2.3,1.55],.035);for(let y=-.5;y<2.3;y+=.35)rod(g,C.steel,[-.3,y,1.55],[.3,y,1.55],.023);tag(g,'MGNT|TANK 081',1.51,.7,0,1.8,.9,Math.PI/2,'hazard');}
+   else{block(g,C.teal,0,.65,.7,2.5,2.8,9,.12);block(g,C.teal,0,1.2,-4,2.65,3.7,2.7,.1);block(g,C.glass,0,2,-5.37,2.2,1,.025,.025,'glass');for(let x of [-1.34,1.34]){block(g,C.glass,x,2,-4,.025,.95,1.7,0,'glass');for(let z=-1.5;z<4.5;z+=.3)block(g,C.iron,x,.75,z,.025,1.3,.12);rod(g,C.steel,[x,-.5,-2.7],[x,-.5,5],.035);}for(let z of [0,2.3])cylinder(g,C.iron,0,2.2,z,.55,.12);tag(g,'FORGE RAIL|071',0,.3,-5.38,1.8,.6,Math.PI,'dark');}
+  }
+  if(kind==='tugboat'||kind==='freighter'){
+   const ship=kind==='freighter',L=ship?42:13,W=ship?11:5;
+   for(const [color,y,h,width,type] of [[C.iron,-.7,2.3,W,'steel'],[C.paint,-1.5,.8,W*.94,'paint'],[C.wood,.5,.18,W*.94,'wood']]){const geo=new T.BoxGeometry(width,h,L,2,1,16),a=geo.attributes.position;for(let i=0;i<a.count;i++){const z=a.getZ(i),t=Math.max(0,-z/(L/2));a.setX(i,a.getX(i)*(1-.85*Math.pow(t,6))*(type==='wood'?1:a.getY(i)<0?.86:1));}geo.computeVertexNormals();part(g,geo,color,[0,y,0],type);}
+   for(let x of [-W*.45,W*.45]){rod(g,C.steel,[x,1.35,-L*.45],[x,1.35,L*.45],.05);for(let z=-L*.45;z<L*.46;z+=ship?3:1.3)rod(g,C.steel,[x,.5,z],[x,1.35,z],.035);}
+   const cabinZ=ship?L*.32:L*.1;block(g,C.cream,0,ship?3.4:1.9,cabinZ,W*.65,ship?5.7:2.8,ship?6:4,.14);block(g,C.teal,0,ship?6.3:3.4,cabinZ,W*.7,.18,ship?6.4:4.3,.04);for(let x of [-W*.22,0,W*.22])block(g,C.glass,x,ship?5.4:2.7,cabinZ-(ship?3.02:2.02),W*.16,.7,.025,0,'glass');cylinder(g,C.paint,0,ship?7:4.3,cabinZ+1,.5,1.3,'paint');rod(g,C.steel,[0,2,-L*.25],[0,ship?8:5,-L*.25],.07);
+   for(let x of [-W*.326,W*.326])for(let z of [-1,0,1])block(g,C.glass,x,ship?5.4:2.7,cabinZ+z,.025,.7,.65,0,'glass');for(let x of [-W*.22,0,W*.22])block(g,C.glass,x,ship?5.4:2.7,cabinZ+(ship?3.02:2.02),W*.16,.7,.025,0,'glass');rod(g,C.steel,[-1,ship?8:5,-L*.25],[1,ship?8:5,-L*.25],.035);
+   if(ship){for(let x of [-3,0,3])for(let z=-15;z<9;z+=6){const color=(z+x)%2?C.teal:C.paint;block(g,color,x,1.8,z,2.8,2.5,5.7,.06);for(let dz=-2.4;dz<2.8;dz+=.6)for(let dx of [-1.42,1.42])block(g,color,x+dx,1.8,z+dz,.055,2.35,.12);}}else for(let z of [-4,0,4])for(let x of [-W*.5,W*.5])ring(g,C.rubber,x,-.1,z,.48,.12,'x','rubber');tag(g,ship?'MAGNET|MERIDIAN':'TUG 04',0,ship?3.2:1.8,cabinZ-(ship?3.03:2.03),ship?4:2,ship?1:.7,Math.PI,'dark');
+  }
+  if(kind==='crane'){
+   for(let x of [-4,4])for(let z of [-4,4]){rod(g,C.yellow,[x,-5,z],[x*.65,7,z*.65],.24,'paint');block(g,C.iron,x,-5,z,1.2,.8,2,.1);}
+   for(let z of [-3,3]){rod(g,C.iron,[-3,-3,z],[3,5,z],.09);rod(g,C.iron,[3,-3,z],[-3,5,z],.09);}block(g,C.yellow,0,7,0,7,.7,7,.1);block(g,C.cream,-2,8,-1,2,2,2,.06);block(g,C.glass,-2,8.3,-2.02,1.5,1,.025,0,'glass');
+   for(let x of [-.7,.7]){rod(g,C.yellow,[x,7.5,0],[x,16,-12],.18,'paint');rod(g,C.yellow,[x,9,0],[x,16,-12],.12,'paint');rod(g,C.iron,[x,9,3],[x,16,-12],.035);}rod(g,C.iron,[0,16,-12],[0,4,-12],.055);ring(g,C.steel,0,3.65,-12,.45,.09);block(g,C.iron,0,8,3,3,2,3,.1);tag(g,'DOCK|07',0,7.1,3.56,2,.5,0,'dark');
+  }
   if(kind==='kiosk'){
    block(g,C.teal,0,-.65,0,3,1.5,2.8,.06);for(let x of [-1.4,1.4])for(let z of [-1.3,1.3])block(g,C.iron,x,.5,z,.1,1.9,.1);block(g,C.yellow,0,1.6,0,3.5,.25,3.2,.07);block(g,C.cream,0,1.26,1.42,2.8,.3,.08);tag(g,'DAILY NEWS',0,1.27,1.47,2.6,.25,0,'dark');block(g,C.wood,0,-.05,1.5,3,.12,.6,.02,'wood');for(let x of [-.9,0,.9]){tag(g,'CITY|EDITION',x,.23,1.42,.58,.55);block(g,C.cream,x,.03,1.38,.58,.05,.42);}for(let x of [-1.51,1.51]){tag(g,'READ|LOCAL',x,.35,0,.9,1.2,Math.sign(x)*Math.PI/2,'dark');}
   }

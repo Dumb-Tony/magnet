@@ -4,12 +4,12 @@ The user asked for a fixed magnet core, a physical lopsided pile that remains na
 
 ## What is playable
 
-One continuous four-district course, 490 collectible objects and 24 object types. The 64 cm core never changes size. There is no growing filler sphere. Eligible objects now crumple on pickup; their final attachment poses are retained as subsequent objects join the pile. See [the visual and crushing pass](CRUSHING.md).
+One continuous six-district course, 790 collectible objects and 34 object types. See [the railworks and dry docks expansion](RAIL_AND_DOCKS.md) for the new route, optional goals and travel. The 64 cm core never changes size. There is no growing filler sphere. Eligible objects now crumple on pickup; their final attachment poses are retained as subsequent objects join the pile. See [the visual and crushing pass](CRUSHING.md).
 
 1. Workshop: tabletop scraps, a ramp, shelves, a narrow optional aisle, long pipes, stools and lockers. Collect the workbench to open the yard.
 2. Salvage yard: barrels, handcarts, bicycles and skips. The forklift opens the street.
 3. Main street: hydrants, signs, parked cars and vans. The bus opens the city plaza.
-4. City plaza: kiosks, trucks, containers, water towers and an optional tram. The skyline spire completes the route. Keep exploring afterward to fill the collection checklist.
+4. City plaza: kiosks, trucks, containers, water towers and an optional tram. The skyline spire opens the railworks; the locomotive then opens the dry docks, where the cargo freighter completes the route. Keep exploring afterward to fill the collection checklist.
 
 Each later district has an off-route rebuild corner with ascending small-to-medium salvage. No countdown, failure timer, delivery bay, currency, upgrades or multiplayer. This is a compact city district, not an entire destructible city.
 

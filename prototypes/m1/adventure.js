@@ -13,7 +13,9 @@ const regions=[
  {name:'THE WORKSHOP',goal:'bench',hint:'Gather tools and furniture, then take the workbench.',exit:25,spawn:[17,0,8]},
  {name:'SALVAGE YARD',goal:'forklift',hint:'Turn barrels, bikes and skips into forklift-sized trouble.',exit:94,spawn:[40,0,0]},
  {name:'MAIN STREET',goal:'bus',hint:'Parked cars and vans build enough pull for the bus.',exit:211,spawn:[111,0,0]},
- {name:'CITY PLAZA',goal:'sculpture',hint:'Collect the tram and street furniture. Take the skyline spire.',exit:410,spawn:[229,0,0]}
+ {name:'CITY PLAZA',goal:'sculpture',hint:'Collect the tram and street furniture. Take the skyline spire.',exit:410,spawn:[229,0,0]},
+ {name:'THE RAILWORKS',goal:'locomotive',hint:'Gather tank wagons and excavators. Take the locomotive.',exit:650,spawn:[438,0,0]},
+ {name:'THE DRY DOCKS',goal:'freighter',hint:'Collect tugboats and dock cranes. Bring home the freighter.',exit:WORLD_END,spawn:[685,0,0]}
 ];
 let objects=[],geoCache={},goals=new Set(),seen=new Set(),stage=0,state='start',p=new T.Vector3(-3,2.32,.7),v=new T.Vector3(),yaw=0,pitch=.68,elapsed=0,cooldown=0,nudgeCooldown=0,stuck=0,nudges=0,rescues=0,last=0,acc=0,stepNumber=0,toastTimer=0,saveTimer=0,storageOK=true,saveData=null,frameMs=0,physicsMs=0,power=CORE,keys=new Set(),dirtyUI=true;
 let settings={sound:false,reduced:false,quality:'high',invert:false,autoHelp:true,fieldToggle:false},audio=null,lastSound=0,fieldLatched=false;
@@ -23,16 +25,16 @@ function message(text){$('toast').textContent=text;toastTimer=3.2;}
 function terrain(x,z){if(!objects[0]?.collected&&x>=-5&&x<=5&&Math.abs(z)<=3)return 2;if(x>=5&&x<=13&&Math.abs(z)<=2)return 2-(x-5)/4;return 0;}
 function addObject(kind,x,y,z,region,extra={}){
  const item={id:objects.length,kind,...defs[kind],region,...extra,mesh:model(kind),pos:new T.Vector3(x,y,z),vel:new T.Vector3(),cool:0,collected:false};
- if(!geoCache[kind])geoCache[kind]=pile.describe(item.mesh);item.geometryInfo=geoCache[kind];item.bound=item.geometryInfo.bound;item.mesh.position.copy(item.pos);if(kind!=='bench')item.mesh.rotation.y=(item.id*2.399)%6.28;scene.add(item.mesh);objects.push(item);return item;
+ if(!geoCache[kind])geoCache[kind]=pile.describe(item.mesh);item.geometryInfo=geoCache[kind];item.bound=item.geometryInfo.bound;if(y===null)item.pos.y=item.geometryInfo.size.y/2-item.geometryInfo.center.y+.03;item.mesh.position.copy(item.pos);if(kind!=='bench')item.mesh.rotation.y=(item.id*2.399)%6.28;scene.add(item.mesh);objects.push(item);return item;
 }
 function refreshPile(){pile.rebuild();power=CORE*Math.cbrt(1+pile.mass/1.2);dirtyUI=true;}
 function reset(play=true){
  for(const item of objects)item.mesh.removeFromParent();pile.clear();objects=[];goals.clear();seen.clear();stage=0;elapsed=0;p.set(-3,2.32,.7);v.set(0,0,0);yaw=0;pitch=.68;cooldown=0;nudgeCooldown=0;stuck=0;nudges=0;rescues=0;stepNumber=0;saveTimer=0;keys.clear();fieldLatched=false;acc=0;state=play?'play':'start';
- autosaveEnabled=true;makeLayout(addObject);refreshPile();camera.position.set(-3,7,9);root.position.copy(p);message('The core stays small. Your scrap does the growing.');panel();render(0);
+ autosaveEnabled=true;FieldNotes.reset();makeLayout(addObject);refreshPile();camera.position.set(-3,7,9);root.position.copy(p);message('The core stays small. Your scrap does the growing.');panel();render(0);
 }
 function save(){
  if(!objects.length||!autosaveEnabled)return;
- const data={version:VERSION,p:p.toArray(),q:rolling.quaternion.toArray(),yaw,pitch,stage,goals:[...goals],seen:[...seen],elapsed,parts:pile.parts.map(a=>({id:a.item.id,crushed:!!a.item.crushed,p:a.item.mesh.position.toArray(),q:a.item.mesh.quaternion.toArray()})),free:objects.filter(o=>!o.collected).map(o=>({id:o.id,crushed:!!o.crushed,p:o.pos.toArray()}))};
+ const data={version:VERSION,found:FieldNotes.save(),p:p.toArray(),q:rolling.quaternion.toArray(),yaw,pitch,stage,goals:[...goals],seen:[...seen],elapsed,parts:pile.parts.map(a=>({id:a.item.id,crushed:!!a.item.crushed,p:a.item.mesh.position.toArray(),q:a.item.mesh.quaternion.toArray()})),free:objects.filter(o=>!o.collected).map(o=>({id:o.id,crushed:!!o.crushed,p:o.pos.toArray()}))};
  try{localStorage.setItem(SAVE,JSON.stringify(data));saveData=data;}catch{storageOK=false;}
 }
 function restore(){
@@ -40,27 +42,28 @@ function restore(){
  try{
  for(const f of data.free){if(objects[f.id]&&f.p.every(Number.isFinite)){if(f.crushed)CrushWorkshop.apply(objects[f.id]);objects[f.id].pos.fromArray(f.p);objects[f.id].mesh.position.copy(objects[f.id].pos);}}
  for(const a of data.parts){const item=objects[a.id];if(!item||item.collected)continue;if(a.crushed)CrushWorkshop.apply(item);item.collected=true;item.mesh.removeFromParent();rolling.add(item.mesh);item.mesh.position.fromArray(a.p);item.mesh.quaternion.fromArray(a.q);const cells=item.geometryInfo.cells.map(c=>({center:c.center.clone().applyQuaternion(item.mesh.quaternion).add(item.mesh.position),r:c.r,id:item.id}));pile.parts.push({item,position:item.mesh.position.clone(),quaternion:item.mesh.quaternion.clone(),cells});}
- stage=T.MathUtils.clamp(data.stage,0,3);goals=new Set(data.goals);seen=new Set(data.seen);elapsed=data.elapsed;p.fromArray(data.p);rolling.quaternion.fromArray(data.q);yaw=data.yaw;pitch=data.pitch;refreshPile();v.set(0,0,0);message('Back to your pile.');render(0);
+ stage=T.MathUtils.clamp(data.stage,0,regions.length-1);goals=new Set(data.goals);while(stage<regions.length-1&&goals.has(regions[stage].goal))stage++;seen=new Set(data.seen);FieldNotes.restore(data.found||data.parts.map(a=>a.id));elapsed=data.elapsed;p.fromArray(data.p);rolling.quaternion.fromArray(data.q);yaw=data.yaw;pitch=data.pitch;refreshPile();v.set(0,0,0);message('Back to your pile.');render(0);
  }catch{reset();message('Could not restore that run. Started fresh.');}
 }
 function collect(item){
- if(item.collected)return;const impact=item.pos.clone().sub(p);item.collected=true;seen.add(item.kind);if(CrushWorkshop.apply(item,!settings.reduced))message(item.label+" — crumpled into the pile.");pile.attach(item,impact);refreshPile();sound(item.bound);pickupFlash=.2;
+ if(item.collected)return;const impact=item.pos.clone().sub(p);item.collected=true;seen.add(item.kind);if(CrushWorkshop.apply(item,!settings.reduced))message(item.label+" — crumpled into the pile.");pile.attach(item,impact);refreshPile();sound(item.bound);pickupFlash=.2;FieldNotes.collect(item);
  if(item.goal&&!goals.has(item.kind)){
    goals.add(item.kind);
-   if(stage<3&&regions[stage].goal===item.kind){stage++;message(regions[stage].name+' — the way ahead is open.');}
-   else if(item.kind==='sculpture'){state='result';keys.clear();fieldLatched=false;message('One little magnet. Four districts of metal.');panel();}
+   if(stage<regions.length-1&&regions[stage].goal===item.kind){stage++;message(regions[stage].name+' — the way ahead is open.');}
+   else if(item.kind===regions.at(-1).goal){state='result';keys.clear();fieldLatched=false;message('One little magnet. Six districts of metal.');panel();}
    save();
  } else if(item.landmark)message('The tram is yours. Find the skyline spire.');
 }
 function nudge(automatic=false){if(nudgeCooldown>0||state!=='play')return;nudgeCooldown=1.1;v.y=Math.max(v.y,3.5+Math.min(pile.rollRadius,4));rolling.quaternion.premultiply(new T.Quaternion().setFromAxisAngle(new T.Vector3(0,1,0),.24));nudges++;if(!automatic)message('A little lift. Keep rolling.');}
 function recover(){if(state!=='play'&&state!=='paused')return;const location=regions[stage].spawn;p.set(location[0],Math.max(2,pile.extent),location[2]);v.set(0,0,0);rescues++;stuck=0;message('Back in the clear — every piece kept.');save();}
+function travelTo(index){if(!['play','paused'].includes(state)||!Number.isInteger(index)||index<0||index>stage)return false;const location=regions[index].spawn;p.set(location[0],Math.max(3,pile.extent),location[2]);v.set(0,0,0);stuck=0;message(regions[index].name+' — every piece kept.');save();return true;}
 function repel(){
  if(state!=='play'||cooldown>0)return;cooldown=1.5;
  const removed=pile.detach(Math.min(5,pile.parts.length));let i=0;
- for(const a of removed){const item=a.item,worldQ=rolling.quaternion.clone().multiply(item.mesh.quaternion);item.mesh.removeFromParent();scene.add(item.mesh);item.mesh.quaternion.copy(worldQ);item.collected=false;const angle=yaw+Math.PI+(i++-removed.length/2)*.4;item.pos.copy(p).add(new T.Vector3(Math.sin(angle),.1,Math.cos(angle)).multiplyScalar(pile.extent+item.bound+2));item.pos.x=T.MathUtils.clamp(item.pos.x,-23,405);item.pos.z=T.MathUtils.clamp(item.pos.z,-areaWidth(item.pos.x)+3,areaWidth(item.pos.x)-3);item.vel.set(Math.sin(angle)*7,4,Math.cos(angle)*7);item.cool=2;item.mesh.position.copy(item.pos);}
+ for(const a of removed){const item=a.item,worldQ=rolling.quaternion.clone().multiply(item.mesh.quaternion);item.mesh.removeFromParent();scene.add(item.mesh);item.mesh.quaternion.copy(worldQ);item.collected=false;const angle=yaw+Math.PI+(i++-removed.length/2)*.4;item.pos.copy(p).add(new T.Vector3(Math.sin(angle),.1,Math.cos(angle)).multiplyScalar(pile.extent+item.bound+2));item.pos.x=T.MathUtils.clamp(item.pos.x,-23,WORLD_END-5);item.pos.z=T.MathUtils.clamp(item.pos.z,-areaWidth(item.pos.x)+3,areaWidth(item.pos.x)-3);item.vel.set(Math.sin(angle)*7,4,Math.cos(angle)*7);item.cool=2;item.mesh.position.copy(item.pos);}
  refreshPile();v.y=4;v.x+=Math.sin(yaw)*4;v.z-=Math.cos(yaw)*4;message(removed.length?'Loose again. Your scrap is still out there.':'Magnetic burst.');
 }
-function areaWidth(x){return x<25?21:x<94?34:x<211?43:73;}
+function areaWidth(x){return x<25?21:x<94?34:x<211?43:x<410?73:x<650?108:140;}
 const tmp=new T.Vector3();
 function support(proxies){let h=CORE;for(const c of proxies){const floor=terrain(p.x+c.center.x,p.z+c.center.z);if(floor<p.y+.35)h=Math.max(h,floor+c.r-c.center.y);}return h;}
 function obstacleCollision(proxies,move){
@@ -100,7 +103,7 @@ function step(input){
  let nearest=null,nearestDist=Infinity;
  for(const item of objects){
    if(item.collected)continue;item.cool=Math.max(0,item.cool-DT);
-   if(item.vel.lengthSq()>.001){item.vel.y-=18*DT;item.pos.addScaledVector(item.vel,DT);const surface=terrain(item.pos.x,item.pos.z)-item.geometryInfo.center.y+item.geometryInfo.size.y/2;if(item.pos.y<surface){item.pos.y=surface;item.vel.y=0;}item.vel.x*=Math.exp(-3*DT);item.vel.z*=Math.exp(-3*DT);item.pos.x=T.MathUtils.clamp(item.pos.x,-23,405);item.pos.z=T.MathUtils.clamp(item.pos.z,-areaWidth(item.pos.x)+1,areaWidth(item.pos.x)-1);}
+   if(item.vel.lengthSq()>.001){item.vel.y-=18*DT;item.pos.addScaledVector(item.vel,DT);const surface=terrain(item.pos.x,item.pos.z)-item.geometryInfo.center.y+item.geometryInfo.size.y/2;if(item.pos.y<surface){item.pos.y=surface;item.vel.y=0;}item.vel.x*=Math.exp(-3*DT);item.vel.z*=Math.exp(-3*DT);item.pos.x=T.MathUtils.clamp(item.pos.x,-23,WORLD_END-5);item.pos.z=T.MathUtils.clamp(item.pos.z,-areaWidth(item.pos.x)+1,areaWidth(item.pos.x)-1);}
    if(item.region>stage){item.mesh.position.copy(item.pos);continue;}
    item.mesh.position.copy(item.pos);const centerDistance=item.pos.distanceTo(p);if(centerDistance>pile.extent+item.bound+8){continue;}
    // Pickups contact the nearest attached object, not an invisible growing sphere.
@@ -123,22 +126,23 @@ function step(input){
 function panel(){
  $('overlay').hidden=state==='play';if(state==='play')return;
  const result=state==='result',paused=state==='paused';
- $('card').innerHTML='<div class="eyebrow">MAGNET / FOUR DISTRICTS. ONE TINY CORE.</div><h1>'+(result?'That escalated<br>beautifully.':paused?'Hold that<br>thought.':'Small core.<br>Huge mess.')+'</h1><p>'+(result?'From the workbench to the skyline. '+pile.parts.length+' objects, all built around the same little magnet.':paused?'Your pile is saved locally. Keep rolling whenever you’re ready.':'Make a lopsided rolling pile of real objects. Start in the workshop, spill into the yard, and take the city piece by piece.')+'</p><button id="go">'+(result?'Keep exploring':paused?'Keep rolling':'Start a new pile')+'</button>'+(!paused&&!result&&saveData?'<button id="continue">Continue saved pile</button>':'')+'<p class="fine">WASD roll · Space attract · F nudge · Shift shed<br>Four milestones, no time pressure. Backspace gets you unstuck.</p>';
+ $('card').innerHTML='<div class="eyebrow">MAGNET / SIX DISTRICTS. ONE TINY CORE.</div><h1>'+(result?'That escalated<br>beautifully.':paused?'Hold that<br>thought.':'Small core.<br>Huge mess.')+'</h1><p>'+(result?'From the workbench to the dry docks. '+pile.parts.length+' objects, all built around the same little magnet.':paused?'Your pile is saved locally. Keep rolling whenever you’re ready.':'Make a lopsided rolling pile of real objects. Start in the workshop, spill into the yard, and take the city piece by piece.')+'</p><button id="go">'+(result?'Keep exploring':paused?'Keep rolling':'Start a new pile')+'</button>'+(!paused&&!result&&saveData?'<button id="continue">Continue saved pile</button>':'')+'<p class="fine">WASD roll · Space attract · F nudge · Shift shed<br>Six milestones, no time pressure. Backspace gets you unstuck.</p>';
  $('go').onclick=()=>{if(paused||result){state='play';keys.clear();panel();}else reset();};if($('continue'))$('continue').onclick=restore;
 }
 function pause(){if(state==='play'){state='paused';keys.clear();fieldLatched=false;save();panel();}else if(state==='paused'){state='play';keys.clear();panel();}}
 function updateHUD(){
- $('size').firstChild.textContent=(pile.extent*2<1?(pile.extent*200).toFixed(0)+' cm':(pile.extent*2).toFixed(1)+' m')+' pile';$('phase').textContent=(stage+1)+'/4 · '+regions[stage].name;
+ if($('travel')){for(const o of $('travel').options)if(o.value!=='')o.disabled=Number(o.value)>stage;}
+ $('size').firstChild.textContent=(pile.extent*2<1?(pile.extent*200).toFixed(0)+' cm':(pile.extent*2).toFixed(1)+' m')+' pile';$('phase').textContent=(stage+1)+'/'+regions.length+' · '+regions[stage].name;
  const target=objects.find(o=>o.kind===regions[stage].goal),ready=power>=target.need;
- $('objective').textContent=goals.has('sculpture')?'The city is yours':(ready?'Take the ':'Build up for the ')+target.label.toLowerCase();
- $('progress').textContent=pile.parts.length+' objects · core stays 64 cm · '+goals.size+'/4 milestones';$('bar').style.width=Math.min(100,power/target.need*100)+'%';
+ $('objective').textContent=goals.has(regions.at(-1).goal)?'The waterfront is yours':(ready?'Take the ':'Build up for the ')+target.label.toLowerCase();
+ $('progress').textContent=pile.parts.length+' objects · core stays 64 cm · '+goals.size+'/'+regions.length+' milestones';$('bar').style.width=Math.min(100,power/target.need*100)+'%';
  $('collection').textContent=seen.size+' / '+Object.keys(defs).length+' kinds found';
  $('clearSave').textContent=autosaveEnabled?'Clear saved run':'Save current run';
  if(!$('catalog').hidden)$('catalog').innerHTML=Object.entries(defs).map(([kind,d])=>'<div class="'+(seen.has(kind)?'found':'missing')+'">'+(seen.has(kind)?'✓ ':power>=d.need?'○ ':'· ')+d.label+'</div>').join('');
- const map=$('map').getContext('2d');map.clearRect(0,0,260,92);map.fillStyle='#203e36';map.fillRect(0,0,260,92);const widths=[29,40,70,121],colors=['#bba76d','#9da86f','#849a9b','#aaa39b'];let x=0;for(let i=0;i<4;i++){map.fillStyle=colors[i];map.globalAlpha=i<=stage?.65:.2;map.fillRect(x+2,15,widths[i]-4,58);x+=widths[i];}map.globalAlpha=1;map.fillStyle='#fbe7a9';map.font='9px Arial';map.fillText('WORKSHOP     YARD       STREET           CITY',5,10);const mx=(p.x+25)/435*256+2,mz=44+p.z/80*30;map.beginPath();map.arc(mx,mz,3.4,0,Math.PI*2);map.fill();map.strokeStyle='#fff9d2';map.beginPath();map.arc((target.pos.x+25)/435*256+2,44+target.pos.z/80*30,5,0,Math.PI*2);map.stroke();
+ const map=$('map').getContext('2d');map.clearRect(0,0,260,92);map.fillStyle='#203e36';map.fillRect(0,0,260,92);const widths=[22,30,42,52,53,61],colors=['#bba76d','#9da86f','#849a9b','#aaa39b','#a7957d','#76a7b1'];let x=0;for(let i=0;i<regions.length;i++){map.fillStyle=colors[i];map.globalAlpha=i<=stage?.65:.2;map.fillRect(x+2,15,widths[i]-4,58);x+=widths[i];}map.globalAlpha=1;map.fillStyle='#fbe7a9';map.font='9px Arial';map.fillText('SHOP  YARD   STREET    CITY     RAIL      DOCKS',4,10);const mapX=wx=>{const edges=[-25,25,94,211,410,650,WORLD_END];let i=0,offset=0;while(i<5&&wx>edges[i+1])offset+=widths[i++];return offset+T.MathUtils.clamp((wx-edges[i])/(edges[i+1]-edges[i]),0,1)*widths[i];};const mx=mapX(p.x),mz=44+p.z/150*30;map.beginPath();map.arc(mx,mz,3.4,0,Math.PI*2);map.fill();map.strokeStyle='#fff9d2';map.beginPath();map.arc(mapX(target.pos.x),44+target.pos.z/150*30,5,0,Math.PI*2);map.stroke();
 }
 function render(delta){
- CrushWorkshop.update(delta);
+ CrushWorkshop.update(delta);FieldNotes.update();
  const begin=performance.now();root.position.copy(p);
  const target=p.clone().add(new T.Vector3(0,Math.min(3,pile.rollRadius*.25),0)),distance=5.5+pile.extent*2.4;
  if(settings.reduced)target.y=terrain(p.x,p.z)+pile.rollRadius+Math.min(3,pile.rollRadius*.25);
@@ -148,7 +152,7 @@ function render(delta){
  camera.position.lerp(desired,delta===0?1:1-Math.exp(-(settings.reduced?3:5)*delta));camera.lookAt(target);
  for(const entry of districtGates){entry.gate.visible=stage<=entry.index;entry.caption.visible=stage<=entry.index;}
  field.position.set(p.x,terrain(p.x,p.z)+.03,p.z);field.scale.setScalar(pile.rollRadius+((settings.fieldToggle?fieldLatched:keys.has('Space'))?2+Math.min(power,5):.25));field.visible=state==='play'&&!settings.reduced;
- const objective=objects.find(o=>o.kind===regions[stage].goal);const dir=objective.pos.clone().sub(p);dir.y=0;arrow.visible=state==='play'&&!goals.has('sculpture');arrow.position.copy(p).add(new T.Vector3(0,pile.extent+1,0));if(dir.lengthSq()>0)arrow.setDirection(dir.normalize());arrow.setLength(Math.min(5,1.4+power*.5),.5,.28);
+ const objective=objects.find(o=>o.kind===regions[stage].goal);const dir=objective.pos.clone().sub(p);dir.y=0;arrow.visible=state==='play'&&!goals.has(regions.at(-1).goal);arrow.position.copy(p).add(new T.Vector3(0,pile.extent+1,0));if(dir.lengthSq()>0)arrow.setDirection(dir.normalize());arrow.setLength(Math.min(5,1.4+power*.5),.5,.28);
  sun.position.set(p.x-20,p.y+40,p.z+16);sun.target.position.copy(p);sun.target.updateMatrixWorld();const span=Math.max(26,pile.extent*3);Object.assign(sun.shadow.camera,{left:-span,right:span,top:span,bottom:-span});sun.shadow.camera.updateProjectionMatrix();
  toastTimer=Math.max(0,toastTimer-delta);$('toast').style.opacity=toastTimer>0?1:0;updateHUD();
  pickupFlash=Math.max(0,pickupFlash-delta);core.material.emissive.setHex(pickupFlash>0&&!settings.reduced?0x665015:0);
@@ -169,10 +173,12 @@ window.addEventListener('blur',()=>{if(state==='play')pause();keys.clear();field
 let drag=false;$('world').addEventListener('pointerdown',e=>{drag=true;$('world').setPointerCapture(e.pointerId);});$('world').addEventListener('pointerup',()=>drag=false);$('world').addEventListener('pointermove',e=>{if(drag){yaw-=e.movementX*.005;pitch=T.MathUtils.clamp(pitch+e.movementY*.004*(settings.invert?-1:1),.3,1.25);}});
 $('pause').onclick=()=>{pause();$('pause').blur();};$('restart').onclick=()=>{reset();$('restart').blur();};$('sound').onclick=()=>{settings.sound=!settings.sound;settingsChanged();$('sound').blur();};
 function settingsChanged(){try{localStorage.setItem(OPTIONS,JSON.stringify(settings));}catch{storageOK=false;}$('sound').textContent=settings.sound?'Sound on':'Sound off';resize();}
-const extra=document.createElement('div');extra.id='options';extra.innerHTML='<button id="collection"></button> <button id="optionsToggle">Options</button><button id="inspectModels">Object gallery</button><div id="catalog" hidden></div><div id="optionsPanel" hidden><label><input id="reduced" type="checkbox"> Reduced motion</label><label><input id="autoHelp" type="checkbox"> Gentle unsticking</label><label><input id="fieldToggle" type="checkbox"> Toggle attraction</label><label>Graphics <select id="quality"><option value="high">High</option><option value="low">Low</option></select></label><button id="rescue">Recover pile</button><button id="clearSave">Clear saved run</button></div>';document.body.appendChild(extra);
+const extra=document.createElement('div');extra.id='options';extra.innerHTML='<button id="collection"></button> <button id="optionsToggle">Options</button><button id="inspectModels">Object gallery</button><div id="catalog" hidden></div><div id="optionsPanel" hidden><label><input id="reduced" type="checkbox"> Reduced motion</label><label><input id="autoHelp" type="checkbox"> Gentle unsticking</label><label><input id="fieldToggle" type="checkbox"> Toggle attraction</label><label>Graphics <select id="quality"><option value="high">High</option><option value="low">Low</option></select></label><label>Travel <select id="travel"><option value="">Choose an unlocked district</option></select></label><button id="rescue">Recover pile</button><button id="clearSave">Clear saved run</button></div>';document.body.appendChild(extra);
 $('inspectModels').onclick=()=>{if(state==='play')pause();location.href='showroom.html';};
+$('travel').innerHTML+=[...regions].map((r,i)=>'<option value="'+i+'">'+r.name+'</option>').join('');$('travel').onchange=()=>{if($('travel').value!=='')travelTo(Number($('travel').value));$('travel').value='';$('travel').blur();};
 $('collection').onclick=()=>{$('catalog').hidden=!$('catalog').hidden;$('collection').blur();};
 const minimap=document.createElement('canvas');minimap.id='map';minimap.width=260;minimap.height=92;minimap.setAttribute('aria-label','District map: dot is your pile, ring is the next milestone.');document.body.appendChild(minimap);
+minimap.title='Click an unlocked district to travel with your pile';minimap.style.cursor='pointer';minimap.onclick=e=>{const rect=minimap.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width*260;let edge=0;for(const [i,width] of [22,30,42,52,53,61].entries()){edge+=width;if(x<edge){if(!travelTo(i))message('Collect the current milestone to open that district.');break;}}};
 $('optionsToggle').onclick=()=>{$('optionsPanel').hidden=!$('optionsPanel').hidden;$('optionsToggle').blur();};
 for(const name of ['reduced','autoHelp','fieldToggle','quality']){const el=$(name);if(name==='quality')el.value=settings[name];else el.checked=settings[name];el.onchange=()=>{settings[name]=name==='quality'?el.value:el.checked;fieldLatched=false;settingsChanged();el.blur();};}
 $('rescue').onclick=()=>{recover();$('rescue').blur();};
@@ -182,4 +188,4 @@ $('clearSave').onclick=()=>{
  $('clearSave').textContent=autosaveEnabled?'Clear saved run':'Save current run';$('clearSave').blur();
 };
 window.Magnet3D={reset,step,repel,nudge,recover,pause,save,restore,draw:render,snapshot:()=>({version:VERSION,state,coreRadius:core.scale.x,power,radius:pile.extent,rollRadius:pile.rollRadius,mass:pile.mass,count:pile.parts.length,total:objects.length,elapsed,stage,goals:[...goals],position:p.toArray(),velocity:v.toArray(),nudges,rescues,frameMs,physicsMs}),get objects(){return objects;},get pile(){return pile;},get position(){return p;},get camera(){return camera;},get renderer(){return renderer;}};
-reset(false);settingsChanged();requestAnimationFrame(frame);
+FieldNotes.install();reset(false);settingsChanged();requestAnimationFrame(frame);

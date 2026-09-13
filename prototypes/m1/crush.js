@@ -2,6 +2,7 @@
 'use strict';
 const CrushWorkshop=(()=>{
  const profiles={car:[.52,.88,.2],van:[.44,.83,.25],bus:[.48,.78,.22],truck:[.46,.8,.24],tram:[.5,.75,.24],container:[.5,.7,.32],tower:[.4,.8,.28],locker:[.62,.85,.12],barrel:[.68,.85,.12],skip:[.7,.85,.13],kiosk:[.55,.8,.2],forklift:[.7,.87,.15],sculpture:[.52,.82,.22]};
+ Object.assign(profiles,{toolbox:[.6,.85,.08],vending:[.5,.8,.14],trafficlight:[.6,.85,.15],excavator:[.55,.8,.25],tankcar:[.55,.8,.22],locomotive:[.5,.8,.25],tugboat:[.55,.78,.3],crane:[.52,.8,.4],freighter:[.48,.8,.5]});
  const templates={},animating=new Set();
  function build(kind){
   if(templates[kind])return templates[kind].clone();
