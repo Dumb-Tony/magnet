@@ -6,7 +6,9 @@ Build a lopsided rolling pile around a magnet that stays 64 cm across. The attac
 
 Explore a deeper workshop, spill into a salvage yard, collect cars on the street, then tackle the city plaza. Four milestones guide a relaxed run: workbench → forklift → bus → skyline spire. Keep exploring afterward. 490 objects, 24 types.
 
-![Fixed core and workshop pile](docs/images/district-workshop.png)
+[Inspect all 24 detailed objects](https://dumb-tony.github.io/magnet/showroom.html) · [Object art notes](docs/OBJECT_ART.md)
+
+![Detailed workshop objects](docs/images/detail-workshop.png)
 
 ## Controls
 
@@ -28,6 +30,8 @@ Open `prototypes/m1/index.html` with its adjacent JavaScript files and `vendor` 
 See [docs/DISTRICTS.md](docs/DISTRICTS.md) for current design/limitations and [docs/PLAYTEST_LOG.md](docs/PLAYTEST_LOG.md) for evidence. Historical design notes remain preserved. Private source excerpts and raw diagnostics remain local and ignored.
 
 ## Tests
+
+- `node tests/detail-browser.cjs`: all 24 model bounds and geometry reuse, mesh batching, gallery controls, crushed previews and narrow viewport.
 
 - `node tests/adventure-browser.cjs`: complete four-district route, immutable attachments, continued late-game play and frame sample. `DIGITAL=1` quantizes the replay to keyboard-style directions; `GAME_URL` targets deployment.
 - `node tests/adventure-regression.cjs`: fixed core, shape contacts, rocking supports, saves, recovery, repulsion, 600 simulated stress seconds, repeatability, options and input checks.

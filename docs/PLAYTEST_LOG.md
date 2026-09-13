@@ -114,3 +114,11 @@ Public play URL: https://dumb-tony.github.io/magnet/. GitHub Pages workflow run 
 - Retest evidence:
 - Decision: proceed / iterate / park:
 - Unresolved questions and next bounded experiment:
+
+## 13 September 2026 — Detailed salvage collection
+
+Rebuilt all 24 collectible types, retained 13 crushed variants, added shared reflection lighting and an interactive object gallery. Authored components are batched by material: 75 container components become four draw batches; 57 forklift components become eight. The core remains 0.32 m in radius.
+
+Validation: complete normal and digital input replays reached all four milestones. The final digital replay continued with 288 attached objects, measuring 12.83 ms average and 15.2 ms maximum frame intervals over 120 samples (Chrome 153, 1440 × 900, local headless run). Results vary with pile and camera position; this is not a broad hardware benchmark. The 600-second regression, attachment invariants, save/reload, shedding, storage-denied and offline checks passed. The new gallery test checks all 24 model bounds/caching, rotation, selection, supported/unsupported crushed previews and a 600 × 850 viewport. Zero JavaScript errors were reported.
+
+Reviewed close-up screenshots of cars, vans, tower, bench, bolt, bicycle, container, forklift and paint can, plus the four-district gameplay screenshots. This is automated play and rendered visual inspection, not fresh human feel testing. Asset notes and screenshots: docs/OBJECT_ART.md.

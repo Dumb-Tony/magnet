@@ -42,7 +42,7 @@ The current version saves locally every 20 simulation seconds, on milestones and
 
 Open `prototypes/m1/index.html` with adjacent `pile.js`, `materials.js`, `world.js`, `crush.js`, `adventure.js` and `vendor/` intact. Locally bundled Three.js 0.160.1 and its MIT license remain unchanged. No external requests or build step. The previous 3D experiment is `growth-first.html`; the original 2D game is `delivery-2d.html`. Tests for those older versions remain separate.
 
-The current course and models live in `world.js`, the attachment model in `pile.js`, and progression/input/save/UI in `adventure.js`. Milestone definitions are centralized in the `regions` array and goal flags, so a later sandbox decision need not rewrite the pile or world models.
+The course lives in `world.js`, detailed collectible models in `detail-models.js`, surface maps in `materials.js`, reflected lighting in `lighting.js`, crushing in `crush.js`, attachment packing in `pile.js`, and progression/input/save/UI in `adventure.js`. Keep all adjacent scripts for offline use. `showroom.html` provides a close-up interactive gallery. See [the object art pass](OBJECT_ART.md). Milestone definitions remain centralized in the `regions` array and goal flags.
 
 ## Limits and next human gate
 

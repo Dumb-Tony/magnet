@@ -1,6 +1,6 @@
 # Magnet: fixed-core districts
 
-Open index.html with pile.js, world.js, adventure.js and vendor intact. Offline file:// play works without a build step; WebGL and keyboard required.
+Open index.html with all adjacent JavaScript files and vendor intact. Offline file:// play works without a build step; WebGL and keyboard required. The Object gallery button opens showroom.html to inspect the 24 detailed models and their crushed forms.
 
 The magnet stays 64 cm. Physical attachments build the pile. Workshop → yard → street → city plaza, with four milestones and continued exploration afterward.
 

@@ -5,12 +5,13 @@ const CrushWorkshop=(()=>{
  const templates={},animating=new Set();
  function build(kind){
   if(templates[kind])return templates[kind].clone();
-  const source=model(kind),g=new T.Group(),profile=profiles[kind];source.updateMatrixWorld(true);
+  const source=DetailedModels.raw(kind),g=new T.Group(),profile=profiles[kind];source.updateMatrixWorld(true);
   const bounds=new T.Box3().setFromObject(source),size=bounds.getSize(new T.Vector3()),center=bounds.getCenter(new T.Vector3());
   source.traverse(part=>{
    if(!part.isMesh)return;
    // Subdivision creates actual accordion creases instead of shrinking an intact box.
-   const geo=part.geometry===boxGeo?new T.BoxGeometry(1,1,1,4,4,8):part.geometry.clone();geo.applyMatrix4(part.matrixWorld);
+   const dimensions=part.geometry.type==='BoxGeometry'?part.geometry.parameters:null;
+   const geo=dimensions?new T.BoxGeometry(dimensions.width,dimensions.height,dimensions.depth,3,3,dimensions.depth>1?12:3):part.geometry.clone();geo.applyMatrix4(part.matrixWorld);
    const a=geo.attributes.position,original=a.clone();
    for(let i=0;i<a.count;i++){
     let x=a.getX(i),y=a.getY(i)-center.y,z=a.getZ(i);const height=y/size.y,along=z/Math.max(size.z,.1);
@@ -25,7 +26,7 @@ const CrushWorkshop=(()=>{
    geo.computeVertexNormals();geo.computeBoundingBox();geo.computeBoundingSphere();geo.morphAttributes.position=[original];
    const m=new T.Mesh(geo,part.material);m.castShadow=m.receiveShadow=true;g.add(m);
   });
-  g.userData.crushed=true;templates[kind]=g;return g.clone();
+  const packed=DetailedModels.batch(g);packed.userData.crushed=true;templates[kind]=packed;return packed.clone();
  }
  function apply(item,animate=false){
   if(item.crushed||!profiles[item.kind])return false;

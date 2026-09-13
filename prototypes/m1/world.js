@@ -21,41 +21,6 @@ const defs={
   hydrant:{need:1.5,mass:35,label:'HYDRANT'},sign:{need:2,mass:70,label:'STREET SIGN'},car:{need:2.6,mass:170,label:'PARKED CAR'},van:{need:3.25,mass:290,label:'DELIVERY VAN'},bus:{need:4.6,mass:950,label:'CITY BUS'},
   kiosk:{need:3.4,mass:330,label:'NEWS KIOSK'},truck:{need:4.2,mass:650,label:'BOX TRUCK'},container:{need:4.8,mass:900,label:'SHIPPING CONTAINER'},tower:{need:5.6,mass:1400,label:'WATER TOWER'},tram:{need:6.8,mass:2600,label:'CITY TRAM'},sculpture:{need:8,mass:4000,label:'SKYLINE SPIRE'}
 };
-function wheels(g,w,z,length,r=.35){for(let x of [-w,w])for(let y of [-length,length]){const m=cylinder(g,palette.dark,x,z,y,r,.22,.1);m.rotation.z=Math.PI/2;}}
-function model(kind){
-  const g=new T.Group();
-  if(kind==='bolt'){cylinder(g,palette.steel,0,0,0,.045,.22);cylinder(g,palette.cream,0,.12,0,.105,.05);}
-  if(kind==='can'){cylinder(g,palette.red,0,0,0,.16,.4);cylinder(g,palette.steel,0,.21,0,.16,.025);box(g,palette.cream,0,0,.157,.17,.18,.02);}
-  if(kind==='tool'){box(g,palette.steel,0,0,0,.13,.09,.6,.7);const head=mesh(ringGeo,palette.steel,[0,0,-.3],[.16,.16,.16],g,.7);head.rotation.x=Math.PI/2;box(g,palette.red,0,0,.12,.15,.11,.26);}
-  if(kind==='pipe'){const m=cylinder(g,palette.red,0,0,0,.13,2.6);m.rotation.z=Math.PI/2;for(let x of [-1,1]){const band=cylinder(g,palette.steel,x,0,0,.16,.12);band.rotation.z=Math.PI/2;}}
-  if(kind==='wheel'){mesh(ringGeo,palette.dark,[0,0,0],[.43,.43,.43],g);for(let i=0;i<4;i++){const spoke=box(g,palette.steel,0,0,0,.055,.68,.07,.6);spoke.rotation.z=i*Math.PI/4;}}
-  if(kind==='stool'){cylinder(g,palette.gold,0,.35,0,.48,.12);for(let x of [-.28,.28])for(let z of [-.28,.28])box(g,palette.dark,x,-.1,z,.065,.85,.065);}
-  if(kind==='locker'){box(g,palette.green,0,0,0,1.1,1.8,.65,.5);for(let y of [-.4,.1,.6])box(g,palette.cream,.28,y,.34,.12,.06,.045);for(let y of [.55,.65,.75])box(g,palette.dark,-.14,y,.34,.4,.025,.03);}
-  if(kind==='bench'){box(g,palette.wood,0,0,0,10,.25,6);box(g,palette.gold,0,-.3,0,9.4,.4,5.4);for(let x of [-4.5,4.5])for(let z of [-2.5,2.5])box(g,palette.green,x,-1.1,z,.25,2,.25);}
-  if(kind==='barrel'){cylinder(g,palette.red,0,0,0,.45,1.25);for(let y of [-.45,.45])cylinder(g,palette.dark,0,y,0,.47,.08);}
-  if(kind==='cart'){box(g,palette.gold,0,0,0,1.1,.12,1.4);box(g,palette.green,0,.55,-.65,1.1,1.1,.08);wheels(g,.55,-.15,.5,.2);}
-  if(kind==='bike'){for(let z of [-.65,.65])mesh(ringGeo,palette.dark,[0,0,z],[.42,.42,.42],g).rotation.y=Math.PI/2;box(g,palette.red,0,.2,0,.09,.1,1.4);box(g,palette.red,0,.45,.3,.09,.75,.08);box(g,palette.dark,0,.85,.3,.65,.07,.07);box(g,palette.dark,0,.55,-.4,.27,.08,.35);}
-  if(kind==='skip'){box(g,palette.green,0,0,0,2.6,1.4,1.8);box(g,palette.dark,0,.72,0,2.3,.04,1.5);for(let i=0;i<4;i++)box(g,palette.steel,-.8+i*.5,.85,.1,.4,.25,1.1);}
-  if(kind==='forklift'){box(g,palette.gold,0,0,0,1.8,1.1,2.4);box(g,palette.dark,0,.8,.3,1.5,.8,1.1);for(let x of [-.7,.7])box(g,palette.dark,x,1.3,.1,.1,2,.1);box(g,palette.gold,0,2.3,.1,1.8,.12,1.5);for(let x of [-.5,.5]){box(g,palette.steel,x,.6,-1.3,.1,2.6,.15);box(g,palette.steel,x,-.65,-2.1,.18,.12,1.8);}wheels(g,.9,-.4,.85,.4);}
-  if(kind==='hydrant'){cylinder(g,palette.red,0,.05,0,.28,.8);cylinder(g,palette.gold,0,.5,0,.32,.13);box(g,palette.red,0,.2,0,.85,.23,.23);}
-  if(kind==='sign'){cylinder(g,palette.steel,0,0,0,.065,3);box(g,palette.green,0,1.35,0,1.8,.7,.09);box(g,palette.cream,0,1.35,.05,1.4,.08,.025);}
-  if(['car','van','bus','truck','tram'].includes(kind)){
-    const bus=kind==='bus'||kind==='tram',truck=kind==='truck',van=kind==='van';const length=bus?10:truck?7:van?5.2:4,w=bus?2.7:2,h=bus?2.6:truck?2.4:van?2:1.1;
-    const color=kind==='tram'?palette.green:bus?palette.gold:truck?'#7c949d':van?palette.cream:palette.red;
-    box(g,color,0,.1,0,w,h*.65,length);box(g,'#597d83',0,h*.55+.2,0,w*.94,h*.55,length*.65);box(g,color,0,h*.825+.23,0,w*.98,.09,length*.68);if(truck)box(g,palette.cream,0,.75,1,w*1.06,2.7,length*.62);
-    for(let z of [-length*.3,length*.3])for(let x of [-w*.53,w*.53]){const tire=cylinder(g,palette.dark,x,-h*.38,z,.48,.25,.1);tire.rotation.z=Math.PI/2;}
-    for(let x of [-w*.35,w*.35]){box(g,palette.cream,x,0,-length/2-.03,.3,.2,.05);box(g,'#a43124',x,0,length/2+.03,.25,.18,.05);}
-    box(g,palette.steel,0,-h*.25,-length/2-.06,w*.9,.14,.12,.7);
-    for(let z=-length*.27;z<=length*.3;z+=bus?1.25:1.5)box(g,color,0,h*.55+.2,z,w*.97,h*.55,.12,.45);
-    for(let z of [-length*.3,length*.3])for(let x of [-w*.6,w*.6]){const hub=cylinder(g,palette.steel,x,-h*.38,z,.23,.035,.7);hub.rotation.z=Math.PI/2;}
-  }
-  if(kind==='kiosk'){box(g,palette.green,0,0,0,3,2.8,2.8);box(g,palette.gold,0,1.6,0,3.5,.25,3.2);box(g,'#5d8990',0,.4,1.42,2.4,1.2,.05);}
-  if(kind==='container'){box(g,palette.red,0,0,0,3,3,8);for(let z=-3.6;z<4;z+=.4)for(let x of [-1.52,1.52])box(g,'#a4523c',x,0,z,.07,2.9,.12);for(let x of [-.7,.7]){box(g,palette.steel,x,0,4.04,.07,2.8,.07,.7);box(g,palette.cream,x,.6,4.05,.4,.25,.025);}box(g,palette.dark,0,0,4.015,.025,2.9,.025);}
-  if(kind==='tower'){cylinder(g,palette.green,0,3,0,3,4);for(let x of [-2,2])for(let z of [-2,2])box(g,palette.dark,x,-1,z,.2,5,.2);cylinder(g,palette.gold,0,5.1,0,3.2,.2);}
-  if(kind==='sculpture'){for(let x of [-3,3])for(let z of [-3,3]){const leg=box(g,palette.red,x,-1,z,.65,18,.65);leg.rotation.z=-x*.055;leg.rotation.x=z*.055;}for(let y of [-8,-3,2,7]){box(g,palette.steel,0,y,0,6.5,.3,6.5);}box(g,palette.red,0,9,0,2,5,2);box(g,palette.gold,0,12,0,.18,3,.18);box(g,palette.gold,1.2,12.5,0,2.4,1,.08);}
-  return g;
-}
-
 const environment=new T.Group();scene.add(environment);const obstacles=[];const landmarkSigns=[];
 const districtGates=[];
 function solid(x,y,z,w,h,d,color){const m=box(environment,color,x,y,z,w,h,d);obstacles.push({x,z,y:y-h/2,top:y+h/2,w,d,mesh:m});return m;}
