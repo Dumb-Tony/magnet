@@ -21,6 +21,8 @@ Implemented the fixed 0.32-radius core, persistent unit-scale attachments, shape
 
 ### Review and next gate
 
+Publication: implementation commit `3f35d7e` deployed successfully in GitHub Pages run `34776291290`. The complete keyboard-style four-district browser route and post-ending continuation then passed against `https://dumb-tony.github.io/magnet/?v=districts-1` with zero page errors. The final documentation/whitespace cleanup does not change behavior.
+
 Agent inspected early fixed-core, workshop pile, street and city screenshots. The final landmark is an angular steel spire so it cannot be mistaken for another growing golden core. Removed roof obstructions, stabilized reduced-motion vertical framing, and made recovery caches off-route rather than mandatory.
 
 Remaining human questions: whether rocking is amusing or tiring; whether assisted contacts are forgiving enough; whether milestone pacing feels natural; and whether the larger world stays interesting after the first run. The solver uses coarse compound spheres and assisted motion, not independently articulated objects. Camera clearance is approximate, and desktop keyboard/WebGL are still required. No fresh-tester enjoyment or comprehension results are claimed.
