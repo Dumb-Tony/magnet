@@ -2,6 +2,28 @@
 
 M1 has automated simulation/browser evidence and user feedback below. No recruited fresh-player sessions have been performed. Subjective acceptance thresholds remain open.
 
+## 3D growth pivot — growth-3d-1
+
+User authorized replacing junk delivery with rolling magnetic growth in a 3D world. The old delivery test gates are historical; this new core-loop experiment needs new human feedback. Decision: **iterate on growth feel**, not proceed to a full-world game.
+
+Built one perspective WebGL workshop, a tabletop/ramp/floor route, 103 collectible objects, size-gated pickups, camera-relative rolling, orbit controls, visible rotating attachments, magnetic reach, shedding/burst and a workbench-absorption ending. Old 2D gameplay is preserved in delivery-2d.html. See PIVOT_3D.md for intentional arcade collision approximations and runtime licensing.
+
+Automated tests used installed Chrome 153.0.8010.37, headless, 1440×900 on the previously recorded Ryzen 9 9950X / Radeon-equipped PC. No human feel session or fresh-player pass is claimed.
+
+- Offline file:// keyboard start, movement and pickup passed. Escape/Enter pause/resume, synthetic focus loss and result restart passed with zero page errors.
+- Complete normal-layout scripted movement route, without teleports or direct pickup calls: tabletop 34 collected, ramp descent to floor 41, growth to bench eligibility 77, ending 81 objects and 4.43 m diameter at 23.717 simulated seconds. This optimized route is not an expected first-player completion time.
+- Complete route with deliberate post-tabletop shedding also passed: five objects released, eventual bench ending with 83 objects at 38.858 simulated seconds. Separate burst check reduced attachments, kept all 103 object identities and prevented immediate reattachment of ejected pieces.
+- A 300-second / 36,000-step accelerated stress run with cyclic movement, attraction and repeated bursts retained all objects, finite positions and consistent collected/attached counts. Peak attached count 27 and radius 1.007. Mean measured step 0.00215 ms, max 0.4 ms (submillisecond timer resolution limits interpretation). This does not substitute for long human play at maximum growth.
+- Fifteen-second input traces scheduled at 30/60/120 FPS produced matching positions and pickup counts within 0.001 world units. Fifty successive resets passed. Denied localStorage remained playable. Keyboard camera orbit produced finite camera positions.
+- Short active-render sample: 120 frame intervals averaged 5.0 ms, max 5.2 ms; 265 draw calls in the sampled scene. This is local headless evidence, not a broad hardware performance guarantee.
+- Agent visually inspected start, rolling assembly, orbit and ending screenshots. Tuned small-part attachment offsets to prevent the growing shell hiding collected bolts, reduced floating sign size, and removed rafters that obstructed the following camera.
+
+Next human check: does growth feel satisfying, are larger pickups readable, is camera control comfortable, and does the player want a longer run? No enjoyment or comprehension gate has been marked passed.
+
+![3D rolling assembly](images/growth-3d.png)
+
+![Workbench ending](images/growth-3d-result.png)
+
 ## Speed tuning — m1-2
 
 User feedback: "it just goes way too slow." Increased base thrust from 1450 to 3000 with sublinear mass compensation `(mass / 5)^0.35`. Under sustained unobstructed input, the force/drag model now gives approximately 248 px/s empty (previously 120) and 87 px/s with a 20-unit load (previously 24). These are calculated steady-speed values, not human measurements. The 900 acceleration and 360 speed limits permit the new pace. Release braking rises from 2.4 to 6/s when neither movement nor field is active; attraction and repulsion retain their existing force settings. Records use the new m1-2 namespace so faster results are not compared against m1-1.

@@ -1,5 +1,7 @@
 # Magnet — Game Design Document
 
+> Historical delivery design. The user-authorized 3D rolling growth pivot now takes precedence; see docs/PIVOT_3D.md. This document is design history, not the active implementation contract.
+
 ## Elevator pitch
 Become a moving, clattering accumulation of metal. Attract scrap, physically carry its awkward shape, repel it when needed, and use heavy anchors to pull yourself through industrial spaces. Bigger means stronger and harder to control.
 
@@ -94,4 +96,3 @@ Developer-only overlays report frame cost, simulation time, relevant physical va
 Milestones are exit gates, not promised calendar dates. At each gate, record observations, parameter changes, unresolved issues, and a proceed / iterate / park decision in docs/PLAYTEST_LOG.md. Recruit five fresh players where possible; an internal solo test can identify problems but cannot count as the fresh-player comprehension gate. Small samples are directional evidence.
 
 M1 includes only the bespoke prototype specification in docs/PROTOTYPE_M1.md. Do not begin M2 merely because M1 runs without crashing. If the mechanic misses its enjoyment or readability gate, run up to two focused tuning rounds before deciding whether to revise the premise or park it. Adding levels, upgrades, story, or polished assets is not the remedy for an unproven verb.
-

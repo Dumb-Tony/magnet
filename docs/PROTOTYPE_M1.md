@@ -1,5 +1,7 @@
 # Milestone 1 — Standalone HTML vertical prototype
 
+> Historical delivery specification, superseded by the authorized 3D growth experiment in PIVOT_3D.md. The original game is preserved as prototypes/m1/delivery-2d.html.
+
 **Status: M1 implemented for testing, 2026-09-13. Human exit gates remain open.** The sole purpose of this milestone is proving the core mechanic/verb before expanding content. Follow the offline, fixed-step, restart, storage, and measurement contract in GDD.md. Thresholds below remain acceptance targets; see PLAYTEST_LOG.md for actual results.
 
 ## Question and hypothesis

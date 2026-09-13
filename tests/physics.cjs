@@ -1,6 +1,6 @@
 // Run: node tests/physics.cjs. Executes the exact embedded game simulation.
 const fs=require('fs'),vm=require('vm'),assert=require('assert'),{performance}=require('perf_hooks');
-const html=fs.readFileSync(require('path').join(__dirname,'../prototypes/m1/index.html'),'utf8');
+const html=fs.readFileSync(require('path').join(__dirname,'../prototypes/m1/delivery-2d.html'),'utf8');
 function game(){const elements={},context=new Proxy({}, {get:()=>()=>{}});const document={createElement:()=>({}),querySelector:()=>({appendChild(){}}),getElementById:id=>elements[id]||(elements[id]={getContext:()=>context,hidden:true,value:'hold',checked:false,addEventListener(){},blur(){}}),addEventListener(){}};const sandbox={document,window:{addEventListener(){}},localStorage:{getItem(){throw Error('blocked')},setItem(){throw Error('blocked')},removeItem(){}},performance,requestAnimationFrame(){},console};vm.createContext(sandbox);vm.runInContext(html.match(/<script>([\s\S]*)<\/script>/)[1],sandbox);return sandbox.window.Magnet}
 const results=[];function test(name,fn){const t=performance.now();fn();results.push({name,passed:true,ms:Math.round(performance.now()-t)})}
 function run(g,seconds,input){for(let i=0;i<Math.round(seconds*120);i++)g.step(typeof input==='function'?input(i):input||{x:0,y:0,mode:0})}

@@ -1,5 +1,9 @@
-# Magnet M1
+# Magnet: 3D growth prototype
 
-Open `index.html` directly in Chrome or Edge, including from `file://`. It embeds every asset and all simulation code. Keyboard required. The public version is https://dumb-tony.github.io/magnet/.
+Open index.html with growth.js and vendor intact. Runs directly from file:// with locally bundled Three.js; WebGL and keyboard required.
 
-See ../../docs/PLAYTEST_LOG.md for evidence and remaining gates, and ../../docs/IMPLEMENTATION_M1.md for tuning decisions. There is no server, build step, multiplayer architecture or later-milestone content.
+WASD/arrows roll, Space attracts, Shift sheds/bursts, Q/E or dragging orbits, Escape pauses, R restarts. Grow from bolts to the workbench. No deliveries.
+
+Public game: https://dumb-tony.github.io/magnet/
+
+Previous 2D delivery experiment: delivery-2d.html (also independently playable offline).
