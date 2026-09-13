@@ -1,6 +1,12 @@
 # Magnet — Playtest log
 
-M1 has automated simulation/browser evidence below. No fresh human players or human feel sessions have been performed. Subjective acceptance thresholds remain open.
+M1 has automated simulation/browser evidence and user feedback below. No recruited fresh-player sessions have been performed. Subjective acceptance thresholds remain open.
+
+## Speed tuning — m1-2
+
+User feedback: "it just goes way too slow." Increased base thrust from 1450 to 3000 with sublinear mass compensation `(mass / 5)^0.35`. Under sustained unobstructed input, the force/drag model now gives approximately 248 px/s empty (previously 120) and 87 px/s with a 20-unit load (previously 24). These are calculated steady-speed values, not human measurements. The 900 acceleration and 360 speed limits permit the new pace. Release braking rises from 2.4 to 6/s when neither movement nor field is active; attraction and repulsion retain their existing force settings. Records use the new m1-2 namespace so faster results are not compared against m1-1.
+
+Automated Chrome full-route retest: heavy block delivered in 19.383 simulation seconds; compact-start mixed assembly delivered in 34.458 seconds. The faster compact-start replay also picked up a pipe (28 salvage mass carried), so its timing is not a controlled same-assembly comparison. The heavy route now settles briefly before engaging attraction; this accommodates the higher arrival velocity and verifies braking. Narrow traversal to anchor, keyboard collection, pause/focus/restart all passed with zero JavaScript errors. Seven physics regressions passed, including pipe jam/shedding recovery, momentum/pose retention and identical 30/60/120 scheduling traces. The 600-second / 72,000-step Chrome stress retest retained all 40 parts with no escaped or non-finite bodies (mean 0.710 ms/step, p95 1.0 ms, max 3.6 ms; sampled wall penetration below 0.079 px). The separate 40-part compound contact/release fixture and storage-denied controls checks also passed. No human-feel pass is inferred; next feedback should judge pace and stopping distance.
 
 ## 2026-09-13 — workshop 01 / rules and physics m1-1
 
