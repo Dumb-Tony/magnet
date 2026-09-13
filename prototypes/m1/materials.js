@@ -13,6 +13,7 @@ const ScrapSurfaces=(()=>{
   if(kind==='rubber'){c.fillStyle='#666';for(let y=0;y<256;y+=24)for(let x=-24;x<256;x+=32){c.save();c.translate(x,y);c.rotate(.6);c.fillRect(0,0,9,22);c.restore();}}
   if(kind==='paint')for(let i=0;i<110;i++){c.fillStyle=i%3?'#77736b':'#604632';c.fillRect(random()*256,random()*256,random()*12,random()*3);}
   if(kind==='concrete'||kind==='asphalt')for(let i=0;i<1900;i++){c.fillStyle=random()>.5?'#bcbcbc':'#e8e8e8';c.beginPath();c.arc(random()*256,random()*256,random()*2.3,.0,7);c.fill();}
+  if(kind==='asphalt'){c.strokeStyle='#888';c.lineWidth=1;for(let i=0;i<4;i++){let x=random()*256,y=random()*256;c.beginPath();c.moveTo(x,y);for(let j=0;j<7;j++){x+=random()*22-11;y+=random()*12;c.lineTo(x,y);}c.stroke();}for(let i=0;i<4500;i++){c.fillStyle=random()>.5?'#aaa':'#ddd';c.fillRect(random()*256,random()*256,1,1);}}
   if(kind==='brick'){c.fillStyle='#777';for(let y=0;y<256;y+=32){c.fillRect(0,y,256,3);for(let x=(y%64?32:0);x<256;x+=64)c.fillRect(x,y,3,32);}}
   if(kind==='glass'){const gradient=c.createLinearGradient(0,0,256,256);gradient.addColorStop(0,'#526979');gradient.addColorStop(.45,'#dce8e9');gradient.addColorStop(.5,'#90aebc');gradient.addColorStop(1,'#e6eeee');c.fillStyle=gradient;c.fillRect(0,0,256,256);}
   const map=new THREE.CanvasTexture(canvas);map.colorSpace=THREE.SRGBColorSpace;map.wrapS=map.wrapT=THREE.RepeatWrapping;map.anisotropy=4;maps[kind]=map;return map;
