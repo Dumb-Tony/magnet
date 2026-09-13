@@ -32,7 +32,7 @@ class MagneticPile {
       let distance=0;
       for(const cell of cells)for(const existing of all) {
         const delta=existing.center.clone().sub(cell.center),projection=delta.dot(candidate),perp=delta.lengthSq()-projection*projection;
-        const combined=(existing.r+cell.r)*.89;
+        const combined=(existing.r+cell.r)*.72;
         if(perp<combined*combined)distance=Math.max(distance,projection+Math.sqrt(combined*combined-perp));
       }
       distance=Math.max(0,distance);

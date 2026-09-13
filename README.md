@@ -36,3 +36,5 @@ See [docs/DISTRICTS.md](docs/DISTRICTS.md) for current design/limitations and [d
 Browser tests need an installed Playwright (`PLAYWRIGHT_MODULE`) and Chrome (`CHROME_PATH`). Test dependencies are not required by players. Older tests target the archived prototypes.
 
 GitHub Pages publishes only `prototypes/m1` from this project's own repository. Human feel and comprehension remain open gates; automation is not a claim that those passed.
+
+Visual update: [distinct surfaces and permanent crushed models](docs/CRUSHING.md).

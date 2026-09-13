@@ -4,7 +4,7 @@ The user asked for a fixed magnet core, a physical lopsided pile that remains na
 
 ## What is playable
 
-One continuous four-district course, 490 collectible objects and 24 object types. The 64 cm core never changes size. There is no growing filler sphere. Mesh sizes and attachment poses are retained as subsequent objects join the pile.
+One continuous four-district course, 490 collectible objects and 24 object types. The 64 cm core never changes size. There is no growing filler sphere. Eligible objects now crumple on pickup; their final attachment poses are retained as subsequent objects join the pile. See [the visual and crushing pass](CRUSHING.md).
 
 1. Workshop: tabletop scraps, a ramp, shelves, a narrow optional aisle, long pipes, stools and lockers. Collect the workbench to open the yard.
 2. Salvage yard: barrels, handcarts, bicycles and skips. The forklift opens the street.
@@ -40,7 +40,7 @@ The current version saves locally every 20 simulation seconds, on milestones and
 
 ## Files and offline play
 
-Open `prototypes/m1/index.html` with adjacent `pile.js`, `world.js`, `adventure.js` and `vendor/` intact. Locally bundled Three.js 0.160.1 and its MIT license remain unchanged. No external requests or build step. The previous 3D experiment is `growth-first.html`; the original 2D game is `delivery-2d.html`. Tests for those older versions remain separate.
+Open `prototypes/m1/index.html` with adjacent `pile.js`, `materials.js`, `world.js`, `crush.js`, `adventure.js` and `vendor/` intact. Locally bundled Three.js 0.160.1 and its MIT license remain unchanged. No external requests or build step. The previous 3D experiment is `growth-first.html`; the original 2D game is `delivery-2d.html`. Tests for those older versions remain separate.
 
 The current course and models live in `world.js`, the attachment model in `pile.js`, and progression/input/save/UI in `adventure.js`. Milestone definitions are centralized in the `regions` array and goal flags, so a later sandbox decision need not rewrite the pile or world models.
 

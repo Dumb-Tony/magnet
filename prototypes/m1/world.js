@@ -8,10 +8,10 @@ renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));renderer.shadowMap.enable
 const camera=new T.PerspectiveCamera(52,innerWidth/innerHeight,.05,700);
 scene.add(new T.HemisphereLight(0xe9f5df,0x576c69,2.4));
 const sun=new T.DirectionalLight(0xffe0a2,3.2);sun.position.set(-12,25,12);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);Object.assign(sun.shadow.camera,{left:-28,right:28,top:28,bottom:-28,near:1,far:70});sun.shadow.bias=-.0003;sun.shadow.normalBias=.025;scene.add(sun);
-const matCache={};function mat(color,metal=.1){const key=color+':'+metal;return matCache[key]||(matCache[key]=new T.MeshStandardMaterial({color,metalness:metal,roughness:metal>.4?.32:.76}));}
+function mat(color,metal=.1){return ScrapSurfaces.material(color,metal);}
 const palette={steel:'#9caeb4',dark:'#354b53',gold:'#f0be4e',red:'#c9694f',green:'#4d8078',wood:'#b29164',cream:'#ece0b7'};
 const boxGeo=new T.BoxGeometry(1,1,1),cylGeo=new T.CylinderGeometry(1,1,1,12),sphereGeo=new T.SphereGeometry(1,24,16),ringGeo=new T.TorusGeometry(1,.23,8,16);
-function mesh(geo,color,pos,scale,parent,metal=.1){const m=new T.Mesh(geo,mat(color,metal));m.position.set(...pos);m.scale.set(...scale);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
+function mesh(geo,color,pos,scale,parent,metal=.1){const repeat=scale.map(v=>Math.max(1,Math.round(Math.abs(v)/3)));const material=ScrapSurfaces.material(color,metal,undefined,[repeat[0],scale[1]<.5?repeat[2]:repeat[1]]);const m=new T.Mesh(geo,material);m.position.set(...pos);m.scale.set(...scale);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
 function box(parent,color,x,y,z,w,h,d,metal=.1){return mesh(boxGeo,color,[x,y,z],[w,h,d],parent,metal)}
 function cylinder(parent,color,x,y,z,r,h,metal=.6){return mesh(cylGeo,color,[x,y,z],[r,h,r],parent,metal)}
 
@@ -42,12 +42,15 @@ function model(kind){
   if(['car','van','bus','truck','tram'].includes(kind)){
     const bus=kind==='bus'||kind==='tram',truck=kind==='truck',van=kind==='van';const length=bus?10:truck?7:van?5.2:4,w=bus?2.7:2,h=bus?2.6:truck?2.4:van?2:1.1;
     const color=kind==='tram'?palette.green:bus?palette.gold:truck?'#7c949d':van?palette.cream:palette.red;
-    box(g,color,0,.3,0,w,h,length);box(g,'#597d83',0,h*.5+.2,0,w*.9,h*.45,length*.65);if(truck)box(g,palette.cream,0,.75,1,w*1.06,2.7,length*.62);
+    box(g,color,0,.1,0,w,h*.65,length);box(g,'#597d83',0,h*.55+.2,0,w*.94,h*.55,length*.65);box(g,color,0,h*.825+.23,0,w*.98,.09,length*.68);if(truck)box(g,palette.cream,0,.75,1,w*1.06,2.7,length*.62);
     for(let z of [-length*.3,length*.3])for(let x of [-w*.53,w*.53]){const tire=cylinder(g,palette.dark,x,-h*.38,z,.48,.25,.1);tire.rotation.z=Math.PI/2;}
-    for(let x of [-w*.35,w*.35])box(g,palette.cream,x,0,-length/2-.03,.3,.2,.05);
+    for(let x of [-w*.35,w*.35]){box(g,palette.cream,x,0,-length/2-.03,.3,.2,.05);box(g,'#a43124',x,0,length/2+.03,.25,.18,.05);}
+    box(g,palette.steel,0,-h*.25,-length/2-.06,w*.9,.14,.12,.7);
+    for(let z=-length*.27;z<=length*.3;z+=bus?1.25:1.5)box(g,color,0,h*.55+.2,z,w*.97,h*.55,.12,.45);
+    for(let z of [-length*.3,length*.3])for(let x of [-w*.6,w*.6]){const hub=cylinder(g,palette.steel,x,-h*.38,z,.23,.035,.7);hub.rotation.z=Math.PI/2;}
   }
   if(kind==='kiosk'){box(g,palette.green,0,0,0,3,2.8,2.8);box(g,palette.gold,0,1.6,0,3.5,.25,3.2);box(g,'#5d8990',0,.4,1.42,2.4,1.2,.05);}
-  if(kind==='container'){box(g,palette.red,0,0,0,3,3,8);for(let z=-3.6;z<4;z+=.65)for(let x of [-1.52,1.52])box(g,palette.cream,x,0,z,.04,2.9,.055);}
+  if(kind==='container'){box(g,palette.red,0,0,0,3,3,8);for(let z=-3.6;z<4;z+=.4)for(let x of [-1.52,1.52])box(g,'#a4523c',x,0,z,.07,2.9,.12);for(let x of [-.7,.7]){box(g,palette.steel,x,0,4.04,.07,2.8,.07,.7);box(g,palette.cream,x,.6,4.05,.4,.25,.025);}box(g,palette.dark,0,0,4.015,.025,2.9,.025);}
   if(kind==='tower'){cylinder(g,palette.green,0,3,0,3,4);for(let x of [-2,2])for(let z of [-2,2])box(g,palette.dark,x,-1,z,.2,5,.2);cylinder(g,palette.gold,0,5.1,0,3.2,.2);}
   if(kind==='sculpture'){for(let x of [-3,3])for(let z of [-3,3]){const leg=box(g,palette.red,x,-1,z,.65,18,.65);leg.rotation.z=-x*.055;leg.rotation.x=z*.055;}for(let y of [-8,-3,2,7]){box(g,palette.steel,0,y,0,6.5,.3,6.5);}box(g,palette.red,0,9,0,2,5,2);box(g,palette.gold,0,12,0,.18,3,.18);box(g,palette.gold,1.2,12.5,0,2.4,1,.08);}
   return g;

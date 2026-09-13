@@ -32,19 +32,19 @@ function reset(play=true){
 }
 function save(){
  if(!objects.length||!autosaveEnabled)return;
- const data={version:VERSION,p:p.toArray(),q:rolling.quaternion.toArray(),yaw,pitch,stage,goals:[...goals],seen:[...seen],elapsed,parts:pile.parts.map(a=>({id:a.item.id,p:a.item.mesh.position.toArray(),q:a.item.mesh.quaternion.toArray()})),free:objects.filter(o=>!o.collected).map(o=>({id:o.id,p:o.pos.toArray()}))};
+ const data={version:VERSION,p:p.toArray(),q:rolling.quaternion.toArray(),yaw,pitch,stage,goals:[...goals],seen:[...seen],elapsed,parts:pile.parts.map(a=>({id:a.item.id,crushed:!!a.item.crushed,p:a.item.mesh.position.toArray(),q:a.item.mesh.quaternion.toArray()})),free:objects.filter(o=>!o.collected).map(o=>({id:o.id,crushed:!!o.crushed,p:o.pos.toArray()}))};
  try{localStorage.setItem(SAVE,JSON.stringify(data));saveData=data;}catch{storageOK=false;}
 }
 function restore(){
  const data=saveData;if(!data||data.version!==VERSION)return reset();reset();
  try{
- for(const f of data.free){if(objects[f.id]&&f.p.every(Number.isFinite)){objects[f.id].pos.fromArray(f.p);objects[f.id].mesh.position.copy(objects[f.id].pos);}}
- for(const a of data.parts){const item=objects[a.id];if(!item||item.collected)continue;item.collected=true;item.mesh.removeFromParent();rolling.add(item.mesh);item.mesh.position.fromArray(a.p);item.mesh.quaternion.fromArray(a.q);const cells=item.geometryInfo.cells.map(c=>({center:c.center.clone().applyQuaternion(item.mesh.quaternion).add(item.mesh.position),r:c.r,id:item.id}));pile.parts.push({item,position:item.mesh.position.clone(),quaternion:item.mesh.quaternion.clone(),cells});}
+ for(const f of data.free){if(objects[f.id]&&f.p.every(Number.isFinite)){if(f.crushed)CrushWorkshop.apply(objects[f.id]);objects[f.id].pos.fromArray(f.p);objects[f.id].mesh.position.copy(objects[f.id].pos);}}
+ for(const a of data.parts){const item=objects[a.id];if(!item||item.collected)continue;if(a.crushed)CrushWorkshop.apply(item);item.collected=true;item.mesh.removeFromParent();rolling.add(item.mesh);item.mesh.position.fromArray(a.p);item.mesh.quaternion.fromArray(a.q);const cells=item.geometryInfo.cells.map(c=>({center:c.center.clone().applyQuaternion(item.mesh.quaternion).add(item.mesh.position),r:c.r,id:item.id}));pile.parts.push({item,position:item.mesh.position.clone(),quaternion:item.mesh.quaternion.clone(),cells});}
  stage=T.MathUtils.clamp(data.stage,0,3);goals=new Set(data.goals);seen=new Set(data.seen);elapsed=data.elapsed;p.fromArray(data.p);rolling.quaternion.fromArray(data.q);yaw=data.yaw;pitch=data.pitch;refreshPile();v.set(0,0,0);message('Back to your pile.');render(0);
  }catch{reset();message('Could not restore that run. Started fresh.');}
 }
 function collect(item){
- if(item.collected)return;const impact=item.pos.clone().sub(p);item.collected=true;seen.add(item.kind);pile.attach(item,impact);refreshPile();sound(item.bound);pickupFlash=.2;
+ if(item.collected)return;const impact=item.pos.clone().sub(p);item.collected=true;seen.add(item.kind);if(CrushWorkshop.apply(item,!settings.reduced))message(item.label+" — crumpled into the pile.");pile.attach(item,impact);refreshPile();sound(item.bound);pickupFlash=.2;
  if(item.goal&&!goals.has(item.kind)){
    goals.add(item.kind);
    if(stage<3&&regions[stage].goal===item.kind){stage++;message(regions[stage].name+' — the way ahead is open.');}
@@ -138,6 +138,7 @@ function updateHUD(){
  const map=$('map').getContext('2d');map.clearRect(0,0,260,92);map.fillStyle='#203e36';map.fillRect(0,0,260,92);const widths=[29,40,70,121],colors=['#bba76d','#9da86f','#849a9b','#aaa39b'];let x=0;for(let i=0;i<4;i++){map.fillStyle=colors[i];map.globalAlpha=i<=stage?.65:.2;map.fillRect(x+2,15,widths[i]-4,58);x+=widths[i];}map.globalAlpha=1;map.fillStyle='#fbe7a9';map.font='9px Arial';map.fillText('WORKSHOP     YARD       STREET           CITY',5,10);const mx=(p.x+25)/435*256+2,mz=44+p.z/80*30;map.beginPath();map.arc(mx,mz,3.4,0,Math.PI*2);map.fill();map.strokeStyle='#fff9d2';map.beginPath();map.arc((target.pos.x+25)/435*256+2,44+target.pos.z/80*30,5,0,Math.PI*2);map.stroke();
 }
 function render(delta){
+ CrushWorkshop.update(delta);
  const begin=performance.now();root.position.copy(p);
  const target=p.clone().add(new T.Vector3(0,Math.min(3,pile.rollRadius*.25),0)),distance=5.5+pile.extent*2.4;
  if(settings.reduced)target.y=terrain(p.x,p.z)+pile.rollRadius+Math.min(3,pile.rollRadius*.25);
