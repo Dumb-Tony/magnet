@@ -2,6 +2,35 @@
 
 M1 has automated simulation/browser evidence and user feedback below. No recruited fresh-player sessions have been performed. Subjective acceptance thresholds remain open.
 
+## Fixed core and four districts — magnet-districts-1
+
+User direction: preserve a physical lopsided pile but prevent navigation dead ends; deepen the workshop, then add yard/street/city; use milestones without time pressure and revisit that choice after play. **Decision: extended build ready for user feedback; human-feel gate remains open.**
+
+Implemented the fixed 0.32-radius core, persistent unit-scale attachments, shape-based ground support and obstacle contacts, 490 objects / 24 kinds, four districts and milestones, an optional tram, post-ending exploration, rebuild corners, map, collection checklist, visible gates, nudge/unsticking/recovery, save/continue and comfort options. Detailed limits and the proxy collision model are in DISTRICTS.md. Previous prototypes remain available.
+
+### Verified behavior
+
+- Full scripted movement route through workbench, forklift, bus and skyline spire passed at 85.892 simulation seconds with 363 attached objects. No direct pickup calls, teleportation or fixture placement were used in that route. A separate replay with movement quantized to keyboard-style directions also passed: 175.292 seconds, 221 attachments. Different paths/assemblies make these timings unsuitable as a controlled speed comparison or human completion target.
+- The core scale stayed exactly 0.32 throughout. Every attached model retained scale `(1,1,1)`. Old attachment positions and quaternions remained unchanged when later objects joined. A bug that overwrote a newly attached mesh with its old world position was caught by this test and fixed before publication.
+- Controlled collision fixture: bare core produced zero shelf contacts; adding a long pipe produced two contacts at the same core location. Rotating that assembly changed required support height from 0.32 to 1.373 units. This confirms shape affects clearance and rolling, not merely appearance. The fixture is separate from the normal route.
+- Repulsion released recent IDs, preserved the total object count, and blocked their immediate return. Recovery retained all attached IDs. Exact attachment poses survived save, browser reload and Continue. Clear save remained cleared after reload; testing caught and fixed an autosave-on-reload recreation bug. Denied storage remained playable. Offline test made zero HTTP requests.
+- 600 simulated seconds / 72,000 steps of cyclic movement, attraction, shedding and recovery: 490 total objects retained, finite state, consistent collected counts and immutable attachments across 600 sampled audits; peak 309 attachments. Mean sampled step 0.0403 ms, max 5.5 ms. This was accelerated simulation, not ten minutes of human play.
+- After completing the normal route, 60 further simulated seconds of movement remained stable with 378 attached objects and an approximately 49.7-unit pile span. Core remained fixed; three gentle automatic nudges occurred and no manual recovery was used. Maximum measured late-game step was 1.2 ms.
+- 30/60/120 scheduling traces matched pickup count and position within 1e-7 world units. Twenty consecutive reset counts matched. Pause/resume, focus-loss pause, nudge/recovery keys, toggle attraction, reduced motion, low graphics and collection panel passed browser checks with zero page errors.
+- Chrome 153.0.8010.37, headless, 1440×900 on the previously recorded Ryzen 9 9950X / Radeon-equipped PC. Late-game frame sample: mean 4.999 ms, max 5.3 ms, 1,731 draw calls. These short headless timings are not a broad hardware or human smoothness guarantee.
+
+### Review and next gate
+
+Agent inspected early fixed-core, workshop pile, street and city screenshots. The final landmark is an angular steel spire so it cannot be mistaken for another growing golden core. Removed roof obstructions, stabilized reduced-motion vertical framing, and made recovery caches off-route rather than mandatory.
+
+Remaining human questions: whether rocking is amusing or tiring; whether assisted contacts are forgiving enough; whether milestone pacing feels natural; and whether the larger world stays interesting after the first run. The solver uses coarse compound spheres and assisted motion, not independently articulated objects. Camera clearance is approximate, and desktop keyboard/WebGL are still required. No fresh-tester enjoyment or comprehension results are claimed.
+
+![Unchanged magnet with early attachments](images/district-core.png)
+
+![Workshop compound pile](images/district-workshop.png)
+
+![City-scale pile](images/district-city.png)
+
 ## 3D growth pivot — growth-3d-1
 
 User authorized replacing junk delivery with rolling magnetic growth in a 3D world. The old delivery test gates are historical; this new core-loop experiment needs new human feedback. Decision: **iterate on growth feel**, not proceed to a full-world game.

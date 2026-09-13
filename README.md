@@ -1,27 +1,38 @@
-# MAGNET — Small beginnings. Huge appetite.
+# MAGNET — Small core. Huge mess.
 
-**[Play the 3D growth prototype](https://dumb-tony.github.io/magnet/)**
+**[Play Magnet](https://dumb-tony.github.io/magnet/)**
 
-Roll a tiny magnet through a sunlit workshop. Bolts become cans, tools, wheels and furniture. Grow big enough to return and swallow the workbench you started on. No delivery bay, countdown or hauling.
+Build a lopsided rolling pile around a magnet that stays 64 cm across. The attached metal creates the larger shape—no growing center ball.
+
+Explore a deeper workshop, spill into a salvage yard, collect cars on the street, then tackle the city plaza. Four milestones guide a relaxed run: workbench → forklift → bus → skyline spire. Keep exploring afterward. 490 objects, 24 types.
+
+![Fixed core and workshop pile](docs/images/district-workshop.png)
+
+## Controls
 
 - WASD / arrows: roll relative to the camera.
-- Space: extend attraction. Eligible objects also stick on contact.
-- Shift: shed the latest five pieces and burst forward.
-- Q / E or pointer drag: orbit the camera.
-- R: restart. Escape: pause. Enter: start/resume/retry. F3: diagnostics.
+- Space: attraction (hold or toggle in Options).
+- Q / E or drag: orbit the camera.
+- F: nudge without shedding. Shift: shed recent pieces and burst.
+- Backspace: recover the intact pile in an open area.
+- Escape: pause and save. R: restart. Enter: start/resume.
 
-Open `prototypes/m1/index.html` for offline play with its adjacent `growth.js` and `vendor` folder. Three.js 0.160.1 is bundled locally with its MIT license; no network assets, installation or build step. Desktop keyboard and WebGL required. Optional sound is generated in-browser.
+Click the collection count for the checklist. The map shows your pile and next milestone. Options include reduced motion, low graphics, automatic unsticking and save controls. Runs autosave locally; Continue saved pile appears after reloading.
 
-The user's 3D growth pivot supersedes the earlier delivery design. See [docs/PIVOT_3D.md](docs/PIVOT_3D.md) for scope and limitations, and [docs/PLAYTEST_LOG.md](docs/PLAYTEST_LOG.md) for evidence. This is a new core-loop experiment, not a whole-world production game or a passed human playtest gate.
+## Offline and earlier prototypes
 
-![3D rolling magnet](docs/images/growth-3d.png)
+Open `prototypes/m1/index.html` with its adjacent JavaScript files and `vendor` folder. No installation, build step or external requests. WebGL and desktop keyboard required. Three.js is locally bundled with its MIT license.
 
-The [previous 2D delivery prototype](https://dumb-tony.github.io/magnet/delivery-2d.html) remains available. Its original GDD and implementation notes are historical. Private source excerpts stay local and ignored.
+[First 3D experiment](https://dumb-tony.github.io/magnet/growth-first.html) · [Original 2D delivery experiment](https://dumb-tony.github.io/magnet/delivery-2d.html)
+
+See [docs/DISTRICTS.md](docs/DISTRICTS.md) for current design/limitations and [docs/PLAYTEST_LOG.md](docs/PLAYTEST_LOG.md) for evidence. Historical design notes remain preserved. Private source excerpts and raw diagnostics remain local and ignored.
 
 ## Tests
 
-`node tests/growth-browser.cjs` checks keyboard play and a complete tabletop → ramp → floor → workbench run. Set `SHED=1` for the route with deliberate repulsion. `node tests/growth-regression.cjs` checks 300 simulated seconds of stress, 30/60/120 scheduling repeatability, resets, camera controls and denied localStorage.
+- `node tests/adventure-browser.cjs`: complete four-district route, immutable attachments, continued late-game play and frame sample. `DIGITAL=1` quantizes the replay to keyboard-style directions; `GAME_URL` targets deployment.
+- `node tests/adventure-regression.cjs`: fixed core, shape contacts, rocking supports, saves, recovery, repulsion, 600 simulated stress seconds, repeatability, options and input checks.
+- `node tests/adventure-storage.cjs`: reload/continue with exact attachment poses, clear save, offline request check and storage-denied play.
 
-Tests require installed Playwright (`PLAYWRIGHT_MODULE` override) and Chrome (`CHROME_PATH` override). `GAME_URL` directs the growth browser test to the public deployment. The older physics/browser/controls/stress tests target the preserved 2D file. Raw evidence stays in ignored `test-results/`.
+Browser tests need an installed Playwright (`PLAYWRIGHT_MODULE`) and Chrome (`CHROME_PATH`). Test dependencies are not required by players. Older tests target the archived prototypes.
 
-GitHub Pages deploys only `prototypes/m1` from this project's repository.
+GitHub Pages publishes only `prototypes/m1` from this project's own repository. Human feel and comprehension remain open gates; automation is not a claim that those passed.

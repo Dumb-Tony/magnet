@@ -1,5 +1,7 @@
 # Active direction: rolling magnetic growth
 
+> Historical first 3D experiment. The fixed-core districts implementation in DISTRICTS.md now takes precedence. The previous build is preserved in growth-first.html.
+
 The user's request to replace delivery with Katamari-inspired growth and a 3D world supersedes the previous M1 delivery contract, including the 2D representation, 40-piece cap and one-file format. The earlier prototype is retained as `prototypes/m1/delivery-2d.html`. This is a bounded replacement experiment, not automatic progression to production or M2.
 
 ## Playable slice

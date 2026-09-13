@@ -3,7 +3,7 @@ const path=require('path'),fs=require('fs'),assert=require('assert');
 (async()=>{
  const browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_PATH||'C:/Program Files/Google/Chrome/Application/chrome.exe'});
  const page=await browser.newPage({viewport:{width:1440,height:900}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto(process.env.GAME_URL||'file:///'+path.resolve(__dirname,'../prototypes/m1/index.html').replaceAll('\\','/'));
+ await page.goto(process.env.GAME_URL||'file:///'+path.resolve(__dirname,'../prototypes/m1/growth-first.html').replaceAll('\\','/'));
  await page.waitForFunction(()=>window.Magnet3D);await page.screenshot({path:'test-results/growth-start.png'});
  await page.keyboard.press('Enter');await page.keyboard.down('KeyD');await page.keyboard.down('Space');await page.waitForTimeout(600);await page.keyboard.up('KeyD');await page.keyboard.up('Space');
  assert((await page.evaluate(()=>Magnet3D.snapshot())).count>0,'keyboard pickups');
