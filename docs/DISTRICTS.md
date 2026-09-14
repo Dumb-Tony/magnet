@@ -41,9 +41,9 @@ The current version saves locally every 20 simulation seconds, on milestones and
 
 ## Files and offline play
 
-Open `prototypes/m1/index.html` with adjacent `pile.js`, `materials.js`, `world.js`, `crush.js`, `adventure.js` and `vendor/` intact. Locally bundled Three.js 0.160.1 and its MIT license remain unchanged. No external requests or build step. The previous 3D experiment is `growth-first.html`; the original 2D game is `delivery-2d.html`. Tests for those older versions remain separate.
+Open `prototypes/m1/index.html` with adjacent `pile.js`, `materials-v2.js`, `world.js`, `crush.js`, `adventure.js` and `vendor/` intact. Locally bundled Three.js 0.160.1 and its MIT license remain unchanged. No external requests or build step. The previous 3D experiment is `growth-first.html`; the original 2D game is `delivery-2d.html`. Tests for those older versions remain separate.
 
-The course lives in `world.js`, `expansion.js` and `airfield.js`, world scenery and the graphics finishing pass in `world-art.js`, detailed collectible models in `detail-models.js`, surface maps in `materials.js`, reflected lighting in `lighting.js`, crushing in `crush.js`, attachment packing in `pile.js`, and progression/input/save/UI in `adventure.js`. Keep all adjacent scripts for offline use. `showroom.html` provides a close-up interactive gallery. See [the object art pass](OBJECT_ART.md). Milestone definitions remain centralized in the `regions` array and goal flags.
+The course lives in `world.js`, `expansion.js`, `airfield.js` and `launch-complex.js`, world scenery and the graphics finishing pass in `world-art.js`, detailed collectible models in `detail-models.js`, surface maps in `materials-v2.js`, reflected lighting in `lighting.js`, crushing in `crush.js`, attachment packing in `pile.js`, and progression/input/save/UI in `adventure.js`. Keep all adjacent scripts for offline use. `showroom.html` provides a close-up interactive gallery. See [the object art pass](OBJECT_ART.md). Milestone definitions remain centralized in the `regions` array and goal flags.
 
 ## Limits and next human gate
 

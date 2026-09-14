@@ -8,7 +8,7 @@ Explore the workshop, salvage yard, street, city, railworks, dry docks, airfield
 
 [Inspect all 45 detailed objects](https://dumb-tony.github.io/magnet/showroom.html) · [Object art notes](docs/OBJECT_ART.md)
 
-A graphics pass adds textured roads, framed windows, workshop structure, landscaping, atmospheric sky and depth-aware shading. High and Low graphics settings are available. See [graphics and airfield notes](docs/GRAPHICS_AND_AIRFIELD.md).
+A graphics pass adds materially distinct roads, masonry, wood, metal, glass, vehicle paint, landscaping, atmospheric sky and depth-aware shading. High and Low graphics settings are available. See the [environmental aesthetics pass](docs/AESTHETICS.md) and [graphics and airfield notes](docs/GRAPHICS_AND_AIRFIELD.md).
 
 ![Detailed workshop objects](docs/images/detail-workshop.png)
 

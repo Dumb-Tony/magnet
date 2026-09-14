@@ -6,7 +6,6 @@ const core=mesh(sphereGeo,palette.gold,[0,0,0],[CORE,CORE,CORE],rolling,.65);
 for(let i=0;i<3;i++){const band=mesh(ringGeo,i===1?palette.cream:palette.green,[0,0,0],[.28,.28,.28],rolling,.5);band.rotation.set(i*Math.PI/2,i===2?Math.PI/2:0,0);}
 const pile=new MagneticPile(T,rolling,CORE);
 const field=new T.Mesh(new T.TorusGeometry(1,.012,6,80),new T.MeshBasicMaterial({color:'#cdf3df',transparent:true,opacity:.25,depthWrite:false}));field.rotation.x=Math.PI/2;scene.add(field);
-const arrow=new T.ArrowHelper(new T.Vector3(1,0,0),new T.Vector3(),2,0xffd263,.55,.3);scene.add(arrow);
 let pickupFlash=0,autosaveEnabled=true;
 const compass=$('target');
 const regions=[
@@ -49,13 +48,13 @@ function restore(){
  }catch{reset();message('Could not restore that run. Started fresh.');}
 }
 function collect(item){
- if(item.collected)return;const impact=item.pos.clone().sub(p);item.collected=true;seen.add(item.kind);if(CrushWorkshop.apply(item,!settings.reduced))message(item.label+" — crumpled into the pile.");pile.attach(item,impact);refreshPile();sound(item.bound);pickupFlash=.2;FieldNotes.collect(item);
+ if(item.collected)return;const impact=item.pos.clone().sub(p);item.collected=true;seen.add(item.kind);CrushWorkshop.apply(item,!settings.reduced);pile.attach(item,impact);refreshPile();sound(item.bound);pickupFlash=.2;FieldNotes.collect(item);
  if(item.goal&&!goals.has(item.kind)){
    goals.add(item.kind);
    if(stage<regions.length-1&&regions[stage].goal===item.kind){stage++;message(regions[stage].name+' — the way ahead is open.');}
    else if(item.kind===regions.at(-1).goal){state='result';keys.clear();fieldLatched=false;message('One little magnet. Eight districts of metal.');panel();}
    save();
- } else if(item.landmark)message('The tram is yours. Find the skyline spire.');
+ }
 }
 function nudge(automatic=false){if(nudgeCooldown>0||state!=='play')return;nudgeCooldown=1.1;v.y=Math.max(v.y,3.5+Math.min(pile.rollRadius,4));rolling.quaternion.premultiply(new T.Quaternion().setFromAxisAngle(new T.Vector3(0,1,0),.24));nudges++;if(!automatic)message('A little lift. Keep rolling.');}
 function recover(){if(state!=='play'&&state!=='paused')return;const location=regions[stage].spawn;p.set(location[0],Math.max(2,pile.extent),location[2]);v.set(0,0,0);rescues++;stuck=0;message('Back in the clear — every piece kept.');save();}
@@ -142,7 +141,7 @@ function updateHUD(){
  $('collection').textContent=seen.size+' / '+Object.keys(defs).length+' kinds found';
  $('clearSave').textContent=autosaveEnabled?'Clear saved run':'Save current run';
  if(!$('catalog').hidden)$('catalog').innerHTML=Object.entries(defs).map(([kind,d])=>'<div class="'+(seen.has(kind)?'found':'missing')+'">'+(seen.has(kind)?'✓ ':power>=d.need?'○ ':'· ')+d.label+'</div>').join('');
- const map=$('map').getContext('2d');map.clearRect(0,0,260,92);map.fillStyle='#203e36';map.fillRect(0,0,260,92);const widths=[15,20,27,32,34,38,42,52],colors=['#bba76d','#9da86f','#849a9b','#aaa39b','#a7957d','#76a7b1','#9cabb5','#9d8fa5'];let x=0;for(let i=0;i<regions.length;i++){map.fillStyle=colors[i];map.globalAlpha=i<=stage?.65:.2;map.fillRect(x+2,15,widths[i]-4,58);x+=widths[i];}map.globalAlpha=1;map.fillStyle='#fbe7a9';map.font='8px Arial';map.fillText('WK YD ST  CITY RAIL DOCK AIR   ORBIT',3,10);const mapX=wx=>{const edges=[-25,25,94,211,410,650,1020,1530,WORLD_END];let i=0,offset=0;while(i<7&&wx>edges[i+1])offset+=widths[i++];return offset+T.MathUtils.clamp((wx-edges[i])/(edges[i+1]-edges[i]),0,1)*widths[i];};const mx=mapX(p.x),mz=44+p.z/245*30;map.beginPath();map.arc(mx,mz,3.4,0,Math.PI*2);map.fill();map.strokeStyle='#fff9d2';map.beginPath();map.arc(mapX(target.pos.x),44+target.pos.z/245*30,5,0,Math.PI*2);map.stroke();
+ const map=$('map').getContext('2d');map.clearRect(0,0,260,92);map.fillStyle='#203e36';map.fillRect(0,0,260,92);const widths=[15,20,27,32,34,38,42,52],colors=['#bba76d','#9da86f','#849a9b','#aaa39b','#a7957d','#76a7b1','#9cabb5','#9d8fa5'];let x=0;for(let i=0;i<regions.length;i++){map.fillStyle=colors[i];map.globalAlpha=i<=stage?.65:.2;map.fillRect(x+2,15,widths[i]-4,58);x+=widths[i];}map.globalAlpha=1;map.fillStyle='#fbe7a9';map.font='8px Arial';map.fillText('WK YD ST  CITY RAIL DOCK AIR   ORBIT',3,10);const mapX=wx=>{const edges=[-25,25,94,211,410,650,1020,1530,WORLD_END];let i=0,offset=0;while(i<7&&wx>edges[i+1])offset+=widths[i++];return offset+T.MathUtils.clamp((wx-edges[i])/(edges[i+1]-edges[i]),0,1)*widths[i];};const mx=mapX(p.x),mz=44+p.z/245*30;map.beginPath();map.arc(mx,mz,3.4,0,Math.PI*2);map.fill();
 }
 function render(delta){
  CrushWorkshop.update(delta);FieldNotes.update();
@@ -155,7 +154,6 @@ function render(delta){
  camera.position.lerp(desired,delta===0?1:1-Math.exp(-(settings.reduced?3:5)*delta));camera.lookAt(target);
  for(const entry of districtGates){entry.gate.visible=stage<=entry.index;entry.caption.visible=stage<=entry.index;}
  field.position.set(p.x,terrain(p.x,p.z)+.03,p.z);field.scale.setScalar(pile.rollRadius+((settings.fieldToggle?fieldLatched:keys.has('Space'))?2+Math.min(power,5):.25));field.visible=state==='play'&&!settings.reduced;
- const objective=objects.find(o=>o.kind===regions[stage].goal);const dir=objective.pos.clone().sub(p);dir.y=0;arrow.visible=state==='play'&&!goals.has(regions.at(-1).goal);arrow.position.copy(p).add(new T.Vector3(0,pile.extent+1,0));if(dir.lengthSq()>0)arrow.setDirection(dir.normalize());arrow.setLength(Math.min(5,1.4+power*.5),.5,.28);
  sun.position.set(p.x-20,p.y+40,p.z+16);sun.target.position.copy(p);sun.target.updateMatrixWorld();const span=Math.max(26,pile.extent*3);Object.assign(sun.shadow.camera,{left:-span,right:span,top:span,bottom:-span,far:Math.max(100,pile.extent*4+70)});sun.shadow.camera.updateProjectionMatrix();
  toastTimer=Math.max(0,toastTimer-delta);$('toast').style.opacity=toastTimer>0?1:0;updateHUD();
  pickupFlash=Math.max(0,pickupFlash-delta);core.material.emissive.setHex(pickupFlash>0&&!settings.reduced?0x665015:0);
@@ -180,8 +178,8 @@ const extra=document.createElement('div');extra.id='options';extra.innerHTML='<b
 $('inspectModels').onclick=()=>{if(state==='play')pause();location.href='showroom.html';};
 $('travel').innerHTML+=[...regions].map((r,i)=>'<option value="'+i+'">'+r.name+'</option>').join('');$('travel').onchange=()=>{if($('travel').value!=='')travelTo(Number($('travel').value));$('travel').value='';$('travel').blur();};
 $('collection').onclick=()=>{$('catalog').hidden=!$('catalog').hidden;$('collection').blur();};
-const minimap=document.createElement('canvas');minimap.id='map';minimap.width=260;minimap.height=92;minimap.setAttribute('aria-label','District map: dot is your pile, ring is the next milestone.');document.body.appendChild(minimap);
-minimap.title='Click an unlocked district to travel with your pile';minimap.style.cursor='pointer';minimap.onclick=e=>{const rect=minimap.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width*260;let edge=0;for(const [i,width] of [18,24,34,40,43,48,53].entries()){edge+=width;if(x<edge){if(!travelTo(i))message('Collect the current milestone to open that district.');break;}}};
+const minimap=document.createElement('canvas');minimap.id='map';minimap.width=260;minimap.height=92;minimap.setAttribute('aria-label','District map: the dot is your pile.');document.body.appendChild(minimap);
+minimap.title='Click an unlocked district to travel with your pile';minimap.style.cursor='pointer';minimap.onclick=e=>{const rect=minimap.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width*260;let edge=0;for(const [i,width] of [15,20,27,32,34,38,42,52].entries()){edge+=width;if(x<edge){if(!travelTo(i))message('Collect the current milestone to open that district.');break;}}};
 $('optionsToggle').onclick=()=>{$('optionsPanel').hidden=!$('optionsPanel').hidden;$('optionsToggle').blur();};
 for(const name of ['reduced','autoHelp','fieldToggle','quality']){const el=$(name);if(name==='quality')el.value=settings[name];else el.checked=settings[name];el.onchange=()=>{settings[name]=name==='quality'?el.value:el.checked;fieldLatched=false;settingsChanged();el.blur();};}
 $('rescue').onclick=()=>{recover();$('rescue').blur();};

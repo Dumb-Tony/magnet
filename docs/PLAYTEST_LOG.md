@@ -148,3 +148,11 @@ Expanded the route to eight districts, 1,116 objects, 45 types and 33 crushed va
 Normal and digital movement replays reached all eight milestones without recovery. They finished with 570 and 799 attached objects respectively. The 799-piece local headless Chrome sample averaged 25.17 ms between frames and peaked at 30.1 ms. Buried-interior culling reduced its reported render calls from 8,134 to 5,290 while retaining every collision proxy, saved part and unit of mass. This is a draw-call comparison from one automated fixture, not a broad hardware benchmark.
 
 The 600-second physics stress, exact save/reload, storage-denied, legacy migration, model, crushing, High/Low graphics, resize and shader-error checks passed. Reviewed dense-pile, launch-complex, rocket and crushed crawler renders. Automated replay and screenshot inspection only; no human feel claim.
+
+## 14 September 2026 — Environmental materials and quiet exploration
+
+Replaced the shared tinted-noise look with nine distinct procedural PBR surface families using separate color, relief and roughness data. Added clear-coated paint, brushed and oxidized steel, explicit rust, chipped brick and mortar, aggregate concrete, cracked asphalt, knotted wood, treaded rubber, reflective glass and rippled water. Added layered hills on both sides of the course, distant city forms, tree lines, cool fill lighting, warmer sunlight and 2,200 instanced grass blades.
+
+Removed per-object pickup notices and the large world-space objective arrow. A browser assertion verifies that collecting an ordinary bolt leaves the toast empty and that no ArrowHelper remains in the scene. Rare milestone, recovery, travel and save messages remain.
+
+The complete eight-district movement replay reached the rocket with 570 attached objects, no recovery and no page errors. Its 120-frame local headless Chrome sample averaged 22.79 ms and peaked at 25.1 ms at 1440 × 900 on High graphics. The 600-second physics regression, all 45 gallery models, all 33 crushed variants, exact save/reload, storage-denied mode, High/Low rendering, resize and shader checks passed. Screenshots of the workshop, brick city, launch background and clear-coated car were visually inspected. Automated evidence only; no fresh human aesthetics or feel-test claim.
