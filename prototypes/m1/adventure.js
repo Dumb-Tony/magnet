@@ -16,7 +16,8 @@ const regions=[
  {name:'CITY PLAZA',goal:'sculpture',hint:'Collect the tram and street furniture. Take the skyline spire.',exit:410,spawn:[229,0,0]},
  {name:'THE RAILWORKS',goal:'locomotive',hint:'Gather tank wagons and excavators. Take the locomotive.',exit:650,spawn:[438,0,0]},
  {name:'THE DRY DOCKS',goal:'freighter',hint:'Collect tugboats and dock cranes. Bring home the freighter.',exit:1020,spawn:[685,0,0]},
- {name:'MERIDIAN AIRFIELD',goal:'airliner',hint:'Gather ground equipment and aircraft. Take the airliner.',exit:WORLD_END,spawn:[1052,0,0]}
+ {name:'MERIDIAN AIRFIELD',goal:'airliner',hint:'Gather ground equipment and aircraft. Take the airliner.',exit:1530,spawn:[1052,0,0]},
+ {name:'ORBITAL LAUNCH COMPLEX',goal:'rocket',hint:'Gather spacecraft and launch machinery. Take the orbital rocket.',exit:WORLD_END,spawn:[1560,0,0]}
 ];
 let objects=[],geoCache={},goals=new Set(),seen=new Set(),stage=0,state='start',p=new T.Vector3(-3,2.32,.7),v=new T.Vector3(),yaw=0,pitch=.68,elapsed=0,cooldown=0,nudgeCooldown=0,stuck=0,nudges=0,rescues=0,last=0,acc=0,stepNumber=0,toastTimer=0,saveTimer=0,storageOK=true,saveData=null,frameMs=0,physicsMs=0,power=CORE,keys=new Set(),dirtyUI=true;
 let settings={sound:false,reduced:false,quality:'high',invert:false,autoHelp:true,fieldToggle:false},audio=null,lastSound=0,fieldLatched=false;
@@ -35,14 +36,15 @@ function reset(play=true){
 }
 function save(){
  if(!objects.length||!autosaveEnabled)return;
- const data={version:VERSION,found:FieldNotes.save(),p:p.toArray(),q:rolling.quaternion.toArray(),yaw,pitch,stage,goals:[...goals],seen:[...seen],elapsed,parts:pile.parts.map(a=>({id:a.item.id,crushed:!!a.item.crushed,p:a.item.mesh.position.toArray(),q:a.item.mesh.quaternion.toArray()})),free:objects.filter(o=>!o.collected).map(o=>({id:o.id,crushed:!!o.crushed,p:o.pos.toArray()}))};
+ const data={version:VERSION,packing:2,found:FieldNotes.save(),p:p.toArray(),q:rolling.quaternion.toArray(),yaw,pitch,stage,goals:[...goals],seen:[...seen],elapsed,parts:pile.parts.map(a=>({id:a.item.id,crushed:!!a.item.crushed,p:a.item.mesh.position.toArray(),q:a.item.mesh.quaternion.toArray()})),free:objects.filter(o=>!o.collected).map(o=>({id:o.id,crushed:!!o.crushed,p:o.pos.toArray()}))};
  try{localStorage.setItem(SAVE,JSON.stringify(data));saveData=data;}catch{storageOK=false;}
 }
 function restore(){
  const data=saveData;if(!data||data.version!==VERSION)return reset();reset();
  try{
  for(const f of data.free){if(objects[f.id]&&f.p.every(Number.isFinite)){if(f.crushed)CrushWorkshop.apply(objects[f.id]);objects[f.id].pos.fromArray(f.p);objects[f.id].mesh.position.copy(objects[f.id].pos);}}
- for(const a of data.parts){const item=objects[a.id];if(!item||item.collected)continue;if(a.crushed)CrushWorkshop.apply(item);item.collected=true;item.mesh.removeFromParent();rolling.add(item.mesh);item.mesh.position.fromArray(a.p);item.mesh.quaternion.fromArray(a.q);const cells=item.geometryInfo.cells.map(c=>({center:c.center.clone().applyQuaternion(item.mesh.quaternion).add(item.mesh.position),r:c.r,id:item.id}));pile.parts.push({item,position:item.mesh.position.clone(),quaternion:item.mesh.quaternion.clone(),cells});}
+ const packing=data.packing===2?1:.75;
+ for(const a of data.parts){const item=objects[a.id];if(!item||item.collected)continue;if(a.crushed)CrushWorkshop.apply(item);item.collected=true;item.mesh.removeFromParent();rolling.add(item.mesh);item.mesh.position.fromArray(a.p).multiplyScalar(packing);item.mesh.quaternion.fromArray(a.q);const cells=item.geometryInfo.cells.map(c=>({center:c.center.clone().applyQuaternion(item.mesh.quaternion).add(item.mesh.position),r:c.r,id:item.id}));pile.parts.push({item,position:item.mesh.position.clone(),quaternion:item.mesh.quaternion.clone(),cells});}
  stage=T.MathUtils.clamp(data.stage,0,regions.length-1);goals=new Set(data.goals);while(stage<regions.length-1&&goals.has(regions[stage].goal))stage++;seen=new Set(data.seen);FieldNotes.restore(data.found||data.parts.map(a=>a.id));elapsed=data.elapsed;p.fromArray(data.p);rolling.quaternion.fromArray(data.q);yaw=data.yaw;pitch=data.pitch;refreshPile();v.set(0,0,0);message('Back to your pile.');render(0);
  }catch{reset();message('Could not restore that run. Started fresh.');}
 }
@@ -51,7 +53,7 @@ function collect(item){
  if(item.goal&&!goals.has(item.kind)){
    goals.add(item.kind);
    if(stage<regions.length-1&&regions[stage].goal===item.kind){stage++;message(regions[stage].name+' — the way ahead is open.');}
-   else if(item.kind===regions.at(-1).goal){state='result';keys.clear();fieldLatched=false;message('One little magnet. Seven districts of metal.');panel();}
+   else if(item.kind===regions.at(-1).goal){state='result';keys.clear();fieldLatched=false;message('One little magnet. Eight districts of metal.');panel();}
    save();
  } else if(item.landmark)message('The tram is yours. Find the skyline spire.');
 }
@@ -64,7 +66,7 @@ function repel(){
  for(const a of removed){const item=a.item,worldQ=rolling.quaternion.clone().multiply(item.mesh.quaternion);item.mesh.removeFromParent();scene.add(item.mesh);item.mesh.quaternion.copy(worldQ);item.collected=false;const angle=yaw+Math.PI+(i++-removed.length/2)*.4;item.pos.copy(p).add(new T.Vector3(Math.sin(angle),.1,Math.cos(angle)).multiplyScalar(pile.extent+item.bound+2));item.pos.x=T.MathUtils.clamp(item.pos.x,-23,WORLD_END-5);item.pos.z=T.MathUtils.clamp(item.pos.z,-areaWidth(item.pos.x)+3,areaWidth(item.pos.x)-3);item.vel.set(Math.sin(angle)*7,4,Math.cos(angle)*7);item.cool=2;item.mesh.position.copy(item.pos);}
  refreshPile();v.y=4;v.x+=Math.sin(yaw)*4;v.z-=Math.cos(yaw)*4;message(removed.length?'Loose again. Your scrap is still out there.':'Magnetic burst.');
 }
-function areaWidth(x){return x<25?21:x<94?34:x<211?43:x<410?73:x<650?108:x<1020?140:195;}
+function areaWidth(x){return x<25?21:x<94?34:x<211?43:x<410?73:x<650?108:x<1020?140:x<1530?195:240;}
 const tmp=new T.Vector3();
 function support(proxies){let h=CORE;for(const c of proxies){const floor=terrain(p.x+c.center.x,p.z+c.center.z);if(floor<p.y+.35)h=Math.max(h,floor+c.r-c.center.y);}return h;}
 function obstacleCollision(proxies,move){
@@ -127,7 +129,7 @@ function step(input){
 function panel(){
  $('overlay').hidden=state==='play';if(state==='play')return;
  const result=state==='result',paused=state==='paused';
- $('card').innerHTML='<div class="eyebrow">MAGNET / SEVEN DISTRICTS. ONE TINY CORE.</div><h1>'+(result?'That escalated<br>beautifully.':paused?'Hold that<br>thought.':'Small core.<br>Huge mess.')+'</h1><p>'+(result?'From the workbench to the runway. '+pile.parts.length+' objects, all built around the same little magnet.':paused?'Your pile is saved locally. Keep rolling whenever you’re ready.':'Make a lopsided rolling pile of real objects. Start in the workshop, spill into the yard, and take the city piece by piece.')+'</p><button id="go">'+(result?'Keep exploring':paused?'Keep rolling':'Start a new pile')+'</button>'+(!paused&&!result&&saveData?'<button id="continue">Continue saved pile</button>':'')+'<p class="fine">WASD roll · Space attract · F nudge · Shift shed<br>Seven milestones, no time pressure. Backspace gets you unstuck.</p>';
+ $('card').innerHTML='<div class="eyebrow">MAGNET / EIGHT DISTRICTS. ONE TINY CORE.</div><h1>'+(result?'That escalated<br>beautifully.':paused?'Hold that<br>thought.':'Small core.<br>Huge mess.')+'</h1><p>'+(result?'From the workbench to the launchpad. '+pile.parts.length+' objects, all built around the same little magnet.':paused?'Your pile is saved locally. Keep rolling whenever you’re ready.':'Make a lopsided rolling pile of real objects. Start in the workshop, spill into the yard, and take the city piece by piece.')+'</p><button id="go">'+(result?'Keep exploring':paused?'Keep rolling':'Start a new pile')+'</button>'+(!paused&&!result&&saveData?'<button id="continue">Continue saved pile</button>':'')+'<p class="fine">WASD roll · Space attract · F nudge · Shift shed<br>Eight milestones, no time pressure. Backspace gets you unstuck.</p>';
  $('go').onclick=()=>{if(paused||result){state='play';keys.clear();panel();}else reset();};if($('continue'))$('continue').onclick=restore;
 }
 function pause(){if(state==='play'){state='paused';keys.clear();fieldLatched=false;save();panel();}else if(state==='paused'){state='play';keys.clear();panel();}}
@@ -135,12 +137,12 @@ function updateHUD(){
  if($('travel')){for(const o of $('travel').options)if(o.value!=='')o.disabled=Number(o.value)>stage;}
  $('size').firstChild.textContent=(pile.extent*2<1?(pile.extent*200).toFixed(0)+' cm':(pile.extent*2).toFixed(1)+' m')+' pile';$('phase').textContent=(stage+1)+'/'+regions.length+' · '+regions[stage].name;
  const target=objects.find(o=>o.kind===regions[stage].goal),ready=power>=target.need;
- $('objective').textContent=goals.has(regions.at(-1).goal)?'The airfield is yours':(ready?'Take the ':'Build up for the ')+target.label.toLowerCase();
+ $('objective').textContent=goals.has(regions.at(-1).goal)?'The launch complex is yours':(ready?'Take the ':'Build up for the ')+target.label.toLowerCase();
  $('progress').textContent=pile.parts.length+' objects · core stays 64 cm · '+goals.size+'/'+regions.length+' milestones';$('bar').style.width=Math.min(100,power/target.need*100)+'%';
  $('collection').textContent=seen.size+' / '+Object.keys(defs).length+' kinds found';
  $('clearSave').textContent=autosaveEnabled?'Clear saved run':'Save current run';
  if(!$('catalog').hidden)$('catalog').innerHTML=Object.entries(defs).map(([kind,d])=>'<div class="'+(seen.has(kind)?'found':'missing')+'">'+(seen.has(kind)?'✓ ':power>=d.need?'○ ':'· ')+d.label+'</div>').join('');
- const map=$('map').getContext('2d');map.clearRect(0,0,260,92);map.fillStyle='#203e36';map.fillRect(0,0,260,92);const widths=[18,24,34,40,43,48,53],colors=['#bba76d','#9da86f','#849a9b','#aaa39b','#a7957d','#76a7b1','#9cabb5'];let x=0;for(let i=0;i<regions.length;i++){map.fillStyle=colors[i];map.globalAlpha=i<=stage?.65:.2;map.fillRect(x+2,15,widths[i]-4,58);x+=widths[i];}map.globalAlpha=1;map.fillStyle='#fbe7a9';map.font='9px Arial';map.fillText('SHOP YARD STREET CITY  RAIL  DOCKS   AIR',4,10);const mapX=wx=>{const edges=[-25,25,94,211,410,650,1020,WORLD_END];let i=0,offset=0;while(i<6&&wx>edges[i+1])offset+=widths[i++];return offset+T.MathUtils.clamp((wx-edges[i])/(edges[i+1]-edges[i]),0,1)*widths[i];};const mx=mapX(p.x),mz=44+p.z/200*30;map.beginPath();map.arc(mx,mz,3.4,0,Math.PI*2);map.fill();map.strokeStyle='#fff9d2';map.beginPath();map.arc(mapX(target.pos.x),44+target.pos.z/200*30,5,0,Math.PI*2);map.stroke();
+ const map=$('map').getContext('2d');map.clearRect(0,0,260,92);map.fillStyle='#203e36';map.fillRect(0,0,260,92);const widths=[15,20,27,32,34,38,42,52],colors=['#bba76d','#9da86f','#849a9b','#aaa39b','#a7957d','#76a7b1','#9cabb5','#9d8fa5'];let x=0;for(let i=0;i<regions.length;i++){map.fillStyle=colors[i];map.globalAlpha=i<=stage?.65:.2;map.fillRect(x+2,15,widths[i]-4,58);x+=widths[i];}map.globalAlpha=1;map.fillStyle='#fbe7a9';map.font='8px Arial';map.fillText('WK YD ST  CITY RAIL DOCK AIR   ORBIT',3,10);const mapX=wx=>{const edges=[-25,25,94,211,410,650,1020,1530,WORLD_END];let i=0,offset=0;while(i<7&&wx>edges[i+1])offset+=widths[i++];return offset+T.MathUtils.clamp((wx-edges[i])/(edges[i+1]-edges[i]),0,1)*widths[i];};const mx=mapX(p.x),mz=44+p.z/245*30;map.beginPath();map.arc(mx,mz,3.4,0,Math.PI*2);map.fill();map.strokeStyle='#fff9d2';map.beginPath();map.arc(mapX(target.pos.x),44+target.pos.z/245*30,5,0,Math.PI*2);map.stroke();
 }
 function render(delta){
  CrushWorkshop.update(delta);FieldNotes.update();

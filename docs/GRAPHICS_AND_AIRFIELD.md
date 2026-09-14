@@ -2,7 +2,7 @@
 
 [Play Magnet](https://dumb-tony.github.io/magnet/) · [Inspect the models](https://dumb-tony.github.io/magnet/showroom.html)
 
-The active game now has seven districts, 967 collectible objects, 40 object types, 28 crushed variants and eight optional Field notes objectives. The original 790 IDs and save version are preserved. A completed dry-docks save opens the airfield on restoration; existing attachments keep their poses.
+The active game now has eight districts, 1,116 collectible objects, 45 object types, 33 crushed variants and eight optional Field notes objectives. The original 967 IDs and save version are preserved. Existing runs migrate forward; piles saved before the denser packing pass tighten once on restoration.
 
 ## World graphics
 
@@ -20,8 +20,16 @@ Meridian Airfield extends the course from x=1020 to x=1530. The cargo freighter 
 
 Aircraft include wings, tail surfaces, cockpit and cabin glazing, landing gear and engine or propeller detail. The airliner has swept wings and engine fan blades. All six new types have permanent crushed forms, previewable in the gallery and retained through shedding and save restoration. Crushing remains an authored deformation, not a rigid-body fracture simulation.
 
+## Eighth chapter and denser piles
+
+The airliner opens the orbital launch complex, extending the course to x=2120. Satellites, six-wheel rovers, radar dishes and crawler transporters lead to an orbital rocket. All five additions have modeled intact and permanent crushed forms.
+
+Attachment placement now samples more possible hollows and seats collision proxies substantially deeper. A 520-piece mixed-pile audit found every new piece joined at the intended 0.54 normalized overlap. Once a pile exceeds 440 parts, fully buried interior meshes stop rendering; their mass, collision proxies, save data and contribution to the pile remain intact. This reduces late-game draw calls without changing the object-built silhouette.
+
 ![Airliner miniature](images/graphics-airliner.png)
+
+![Dense 520-piece object-built pile](images/dense-pile.png)
 
 ## Validation
 
-Complete movement replays cover all seven milestones with normal and keyboard-style digital directions. Graphics checks cover old-save migration, original layout IDs, shader errors, nonblank rendering, viewport resizing, High/Low switching and intact/crushed gallery previews. The existing long-run physics, storage, model and crushing regressions also pass. These are automated browser tests and rendered visual review, not human feel testing or a hardware compatibility benchmark.
+Complete movement replays cover all eight milestones with normal and keyboard-style digital directions. Graphics checks cover old-save migration, original layout IDs, shader errors, nonblank rendering, viewport resizing, High/Low switching and intact/crushed gallery previews. The existing long-run physics, storage, model and crushing regressions also pass. These are automated browser tests and rendered visual review, not human feel testing or a hardware compatibility benchmark.

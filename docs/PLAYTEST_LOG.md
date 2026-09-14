@@ -138,3 +138,13 @@ Expanded to seven districts, 967 objects, 40 types and 28 crushed variants. Adde
 Final local normal and digital movement replays reached all seven milestones and continued late-game play. The normal replay finished with 498 attachments and the fixed 0.32 m core. Frame samples averaged 18.21 ms (normal, max 25) and 15.25 ms (digital, max 25) in local headless Chrome at 1440 × 900. These short samples depend on pile composition and machine load; they are not a general 60 FPS guarantee. The existing 600-second stress, storage, detailed-model and crush regressions passed.
 
 The new graphics regression verifies all original 790 layout IDs, migration from a completed six-district save, visible nonblank rendering, High/Low switching, target resizing and intact/crushed previews for all six new types. No browser or shader errors. Reviewed rendered workshop, city, docks, airfield and aircraft images; this is automated replay and screenshot inspection, not fresh human feel testing.
+
+## 14 September 2026 — Dense packing and orbital launch complex
+
+Reduced the attachment proxy spacing from 72% to 54% of combined radii and expanded attachment sampling from 14 to 32 directions. A 520-piece mixed-pile audit measured every new part at the intended 0.54 normalized contact distance, with a 0.54 mean and maximum. Piles saved by the previous packing version tighten once on restoration. The fixed core remains 0.32 m and individual object mesh scales remain one.
+
+Expanded the route to eight districts, 1,116 objects, 45 types and 33 crushed variants. The airliner now opens an orbital launch complex containing satellites, lunar rovers, radar dishes, crawler transporters and a final orbital rocket. Original 967 object IDs remain stable.
+
+Normal and digital movement replays reached all eight milestones without recovery. They finished with 570 and 799 attached objects respectively. The 799-piece local headless Chrome sample averaged 25.17 ms between frames and peaked at 30.1 ms. Buried-interior culling reduced its reported render calls from 8,134 to 5,290 while retaining every collision proxy, saved part and unit of mass. This is a draw-call comparison from one automated fixture, not a broad hardware benchmark.
+
+The 600-second physics stress, exact save/reload, storage-denied, legacy migration, model, crushing, High/Low graphics, resize and shader-error checks passed. Reviewed dense-pile, launch-complex, rocket and crushed crawler renders. Automated replay and screenshot inspection only; no human feel claim.

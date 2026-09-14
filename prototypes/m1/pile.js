@@ -26,18 +26,20 @@ class MagneticPile {
     const all=[{center:new T.Vector3(),r:this.coreRadius},...this.proxies];
     let best=null;
     // Prefer the actual contact hemisphere, but pack adjacent hollows instead of a single spire.
-    for(let sample=0;sample<14;sample++) {
-      const a=sample*2.399963, y=1-2*(sample+.5)/14;
+    for(let sample=0;sample<32;sample++) {
+      const a=sample*2.399963, y=1-2*(sample+.5)/32;
       const candidate=sample===0?direction.clone():new T.Vector3(Math.cos(a)*Math.sqrt(1-y*y),y,Math.sin(a)*Math.sqrt(1-y*y)).lerp(direction,.38).normalize();
       let distance=0;
       for(const cell of cells)for(const existing of all) {
         const delta=existing.center.clone().sub(cell.center),projection=delta.dot(candidate),perp=delta.lengthSq()-projection*projection;
-        const combined=(existing.r+cell.r)*.72;
+        // Proxy spheres intentionally overlap: the visible crushed meshes should
+        // read as one compressed mass rather than ornaments hovering on a shell.
+        const combined=(existing.r+cell.r)*.54;
         if(perp<combined*combined)distance=Math.max(distance,projection+Math.sqrt(combined*combined-perp));
       }
       distance=Math.max(0,distance);
       const root=candidate.clone().multiplyScalar(distance),outer=Math.max(...cells.map(c=>c.center.clone().add(root).length()+c.r));
-      const score=outer+(1-candidate.dot(direction))*Math.max(.04,outer*.05);
+      const score=outer+root.length()*.035+(1-candidate.dot(direction))*Math.max(.04,outer*.045);
       if(!best||score<best.score)best={score,root,outer};
     }
     item.mesh.removeFromParent();this.group.add(item.mesh);item.mesh.position.copy(best.root);item.mesh.quaternion.copy(q);
@@ -51,6 +53,13 @@ class MagneticPile {
     // Movement radius follows the actual compact pile; isolated protrusions still collide.
     const radii=this.proxies.map(c=>c.center.length()+c.r).sort((a,b)=>a-b);
     this.rollRadius=radii.length?Math.max(this.coreRadius,radii[Math.floor(radii.length*.65)]):this.coreRadius;
+    // Deeply buried meshes cannot contribute to the silhouette, but drawing all
+    // of them makes very large piles expensive. Physics and saved parts remain.
+    const visualLimit=440,latest=40;
+    if(this.parts.length>visualLimit){
+      const outer=new Set(this.parts.map((part,index)=>({index,r:Math.max(...part.cells.map(c=>c.center.length()+c.r))})).sort((a,b)=>b.r-a.r).slice(0,visualLimit-latest).map(x=>x.index));
+      for(let i=0;i<this.parts.length;i++)this.parts[i].item.mesh.visible=outer.has(i)||i>=this.parts.length-latest;
+    }else for(const part of this.parts)part.item.mesh.visible=true;
   }
   worldProxies() {
     const q=this.group.quaternion;
@@ -58,6 +67,7 @@ class MagneticPile {
   }
   detach(number) {
     const removed=this.parts.splice(Math.max(0,this.parts.length-number));
+    for(const part of removed)part.item.mesh.visible=true;
     this.rebuild();return removed;
   }
   clear(){for(const a of this.parts)a.item.mesh.removeFromParent();this.parts=[];this.rebuild();this.group.quaternion.identity();}

@@ -4,18 +4,19 @@ The user asked for a fixed magnet core, a physical lopsided pile that remains na
 
 ## What is playable
 
-One continuous seven-district course, 967 collectible objects and 40 object types. See [the railworks and dry docks expansion](RAIL_AND_DOCKS.md) for the new route, optional goals and travel. The 64 cm core never changes size. There is no growing filler sphere. Eligible objects now crumple on pickup; their final attachment poses are retained as subsequent objects join the pile. See [the visual and crushing pass](CRUSHING.md).
+One continuous eight-district course, 1,116 collectible objects and 45 object types. The route now continues through Meridian Airfield into an orbital launch complex. The 64 cm core never changes size. There is no growing filler sphere. Eligible objects crumple on pickup and seat deeply into the compound pile. See [the visual and crushing pass](CRUSHING.md).
 
 1. Workshop: tabletop scraps, a ramp, shelves, a narrow optional aisle, long pipes, stools and lockers. Collect the workbench to open the yard.
 2. Salvage yard: barrels, handcarts, bicycles and skips. The forklift opens the street.
 3. Main street: hydrants, signs, parked cars and vans. The bus opens the city plaza.
-4. City plaza: kiosks, trucks, containers, water towers and an optional tram. The skyline spire opens the railworks; the locomotive then opens the dry docks, where the cargo freighter opens Meridian Airfield. Gather ground vehicles, propeller planes and control towers before taking the airliner. Keep exploring afterward to fill the collection checklist.
+4. City plaza: kiosks, trucks, containers, water towers and an optional tram. The skyline spire opens the railworks; the locomotive then opens the dry docks.
+5. Late route: the cargo freighter opens Meridian Airfield. Ground vehicles, propeller planes and control towers build toward the airliner, which opens the orbital launch complex. Satellites, rovers, radar dishes and crawler transporters build toward the orbital rocket. Keep exploring afterward to fill the collection checklist.
 
 Each later district has an off-route rebuild corner with ascending small-to-medium salvage. No countdown, failure timer, delivery bay, currency, upgrades or multiplayer. This is a compact city district, not an entire destructible city.
 
 ## Shape and navigation
 
-`pile.js` handles the fixed core and compound attachments. Each object has a small set of overlapping collision spheres based on its model bounds. Packing samples possible directions near the contact side and chooses a nearby compact attachment; stored item positions/quaternions never move during later growth. Mesh scale remains one. The core radius remains 0.32.
+`pile.js` handles the fixed core and compound attachments. Each object has a small set of overlapping collision spheres based on its model bounds. Packing samples 32 directions near the contact side and chooses a nearby hollow. Proxy spheres overlap to 54% of their combined radii so crushed visible meshes seat into one mass; stored item positions/quaternions never move during later growth. Saves made before this packing pass are tightened once when restored. Mesh scale remains one. The core radius remains 0.32.
 
 Collision proxies rotate with the pile. Their lowest supports set ground height; protruding parts can contact shelves even when the core would clear them. The effective rolling radius follows the 65th percentile of actual proxy extents, so one long pipe does not make ordinary travel crawl. Directional input supplies generous movement and angular assistance. This is a compound arcade approximation, not an articulated rigid-body solver: coarse proxies may interpenetrate slightly, and object attachment is not momentum conserving.
 

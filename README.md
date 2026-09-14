@@ -4,9 +4,9 @@
 
 Build a lopsided rolling pile around a magnet that stays 64 cm across. The attached metal creates the larger shape—no growing center ball.
 
-Explore the workshop, salvage yard, street, city, railworks, dry docks and an airfield. Seven milestones lead from a workbench to a locomotive, cargo freighter and airliner. Keep exploring afterward. 967 objects, 40 types, 28 crushed variants and eight optional Field notes objectives.
+Explore the workshop, salvage yard, street, city, railworks, dry docks, airfield and orbital launch complex. Eight milestones lead from a workbench to a locomotive, cargo freighter, airliner and rocket. Keep exploring afterward. 1,116 objects, 45 types, 33 crushed variants and eight optional Field notes objectives.
 
-[Inspect all 40 detailed objects](https://dumb-tony.github.io/magnet/showroom.html) · [Object art notes](docs/OBJECT_ART.md)
+[Inspect all 45 detailed objects](https://dumb-tony.github.io/magnet/showroom.html) · [Object art notes](docs/OBJECT_ART.md)
 
 A graphics pass adds textured roads, framed windows, workshop structure, landscaping, atmospheric sky and depth-aware shading. High and Low graphics settings are available. See [graphics and airfield notes](docs/GRAPHICS_AND_AIRFIELD.md).
 
@@ -35,9 +35,10 @@ See [docs/DISTRICTS.md](docs/DISTRICTS.md) for current design/limitations and [d
 
 - `node tests/graphics-browser.cjs`: previous-save migration, original 790 IDs, High/Low rendering, resizing, shader errors and six new model previews.
 
-- `node tests/detail-browser.cjs`: all 40 model bounds and geometry reuse, mesh batching, gallery controls, crushed previews and narrow viewport.
+- `node tests/detail-browser.cjs`: all 45 model bounds and geometry reuse, mesh batching, gallery controls, crushed previews and narrow viewport.
 
-- `node tests/adventure-browser.cjs`: complete seven-district route, immutable attachments, continued late-game play and frame sample. `DIGITAL=1` quantizes the replay to keyboard-style directions; `GAME_URL` targets deployment.
+- `node tests/adventure-browser.cjs`: complete eight-district route, immutable attachments, continued late-game play and frame sample. `DIGITAL=1` quantizes the replay to keyboard-style directions; `GAME_URL` targets deployment.
+- `node tests/pile-density-browser.cjs`: deep seating for every sampled pickup, dense-pile silhouette and hidden-interior rendering cap.
 - `node tests/adventure-regression.cjs`: fixed core, shape contacts, rocking supports, saves, recovery, repulsion, 600 simulated stress seconds, repeatability, options and input checks.
 - `node tests/adventure-storage.cjs`: reload/continue with exact attachment poses, clear save, offline request check and storage-denied play.
 
