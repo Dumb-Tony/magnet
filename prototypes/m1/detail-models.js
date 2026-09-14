@@ -122,6 +122,22 @@ const DetailedModels=(()=>{
   if(kind==='sculpture'){
    for(let x of [-3,3])for(let z of [-3,3]){rod(g,C.paint,[x,-10,z],[x*.55,8,z*.55],.22,'paint');block(g,C.iron,x,-9.9,z,.85,.2,.85,.06);}for(let y of [-8,-3,2,7]){for(let z of [-2.8,2.8])rod(g,C.steel,[-2.8,y,z],[2.8,y,z],.09);for(let x of [-2.8,2.8])rod(g,C.steel,[x,y,-2.8],[x,y,2.8],.09);for(let z of [-2.65,2.65]){rod(g,C.paint,[-2.65,y,z],[2.65,y+4.7,z],.07,'paint');rod(g,C.paint,[2.65,y,z],[-2.65,y+4.7,z],.07,'paint');}}block(g,C.paint,0,9,0,1.2,5,1.2,.12);cylinder(g,C.steel,0,12,0,.12,3);tag(g,'M',1.1,12.5,0,2,1,0,'hazard');for(let y=8;y<11.5;y+=.5)ring(g,C.steel,0,y,0,.85,.035,'y');
   }
+  if(kind==='suitcase'){block(g,C.teal,0,0,0,.65,.85,.3,.06);for(let x of [-.24,.24])block(g,C.iron,x,0,.16,.045,.73,.025);rod(g,C.steel,[-.13,.55,0],[.13,.55,0],.025);for(let x of [-.13,.13])rod(g,C.steel,[x,.4,0],[x,.55,0],.017);for(let x of [-.22,.22])tire(g,x,-.43,0,.07,.08);tag(g,'MERIDIAN',0,.16,.158,.42,.14,0,'paper');}
+  if(kind==='baggagecart'){block(g,C.yellow,0,-.2,0,1.8,.18,3,.035);for(let x of [-.85,.85])for(let z of [-1.1,1.1])tire(g,x,-.4,z,.25,.2);for(let x of [-.8,.8])for(let z of [-1.4,1.4])rod(g,C.iron,[x,-.15,z],[x,.8,z],.035);for(let x of [-.8,.8])rod(g,C.iron,[x,.8,-1.4],[x,.8,1.4],.035);rod(g,C.steel,[0,-.2,-1.5],[0,-.2,-2.1],.055);for(let z of [-.8,0,.8])block(g,z===0?C.paint:C.teal,0,.2,z,1.4,.7,.6,.05);}
+  if(kind==='fueltruck'){vehicle(g,'truck');for(const m of [...g.children])if(m.geometry?.parameters?.height===2.7&&m.geometry.parameters.width===2.08)g.remove(m);const tank=cylinder(g,C.cream,0,1.2,1.1,1.5,4.5,'paint',24);tank.rotation.x=Math.PI/2;for(let z of [-.8,1,3])ring(g,C.yellow,0,1.2,z,1.52,.05);tag(g,'JET A-1|FLAMMABLE',1.53,1.2,1.1,1.8,.9,Math.PI/2,'hazard');for(let x of [-.4,.4])rod(g,C.steel,[x,-.5,3.5],[x,2.8,3.5],.03);for(let y=-.3;y<2.8;y+=.4)rod(g,C.steel,[-.4,y,3.5],[.4,y,3.5],.025);}
+  if(kind==='controltower'){block(g,C.cream,0,4,0,4,13,4,.12);for(let y=-1;y<10;y+=2)block(g,C.glass,0,y,2.015,1.1,1.3,.025,0,'glass');block(g,C.iron,0,11,0,7,1,7,.1);block(g,C.glass,0,12.6,0,6.5,2.4,6.5,.13,'glass');block(g,C.teal,0,14,0,7.3,.35,7.3,.08);for(let x of [-3.2,0,3.2])for(let z of [-3.2,3.2])rod(g,C.cream,[x,11.4,z],[x,13.8,z],.075);rod(g,C.steel,[0,14,0],[0,17,0],.08);rod(g,C.steel,[-2,16.8,0],[2,16.8,0],.06);tag(g,'MERIDIAN|CONTROL',0,9,2.025,3,1.3,0,'dark');}
+  if(kind==='propplane'||kind==='airliner'){
+   const jet=kind==='airliner',L=jet?38:11,R=jet?2.1:.65;
+   const body=cylinder(g,C.cream,0,1,0,R,L,'paint',32);body.rotation.x=Math.PI/2;
+   for(const [z,rotation] of [[-L/2-(jet?2:.75),-Math.PI/2],[L/2+(jet?2:.75),Math.PI/2]]){const nose=part(g,new T.ConeGeometry(R,jet?4:1.5,32),C.cream,[0,1,z]);nose.rotation.x=rotation;}
+   if(jet){const shape=new T.Shape();shape.moveTo(-17,2.7);for(const [x,z] of [[-3,-2.8],[3,-2.8],[17,2.7],[17,4.1],[3,1.8],[-3,1.8],[-17,4.1]])shape.lineTo(x,z);shape.closePath();const wing=part(g,new T.ExtrudeGeometry(shape,{depth:.2,bevelEnabled:true,bevelSize:.035,bevelThickness:.035,bevelSegments:1,steps:1}),C.teal,[0,.65,0]);wing.rotation.x=Math.PI/2;}else block(g,C.teal,0,.6,0,13,.18,1.7,.08);
+   block(g,C.teal,0,1,L*.38,jet?12:4.5,.14,jet?3:1,.05);const fin=block(g,C.teal,0,jet?4.1:2.2,L*.4,.22,jet?6:2.5,jet?4:1.7,.08);fin.rotation.x=-.18;
+   for(let x of [-R*.985,R*.985])for(let z=-L*.3;z<L*.31;z+=jet?1.3:.8)block(g,C.glass,x,1+R*.15,z,.065,jet?.45:.23,jet?.65:.32,.035,'glass');for(let x of [-R*.78,R*.78])block(g,C.glass,x,1+R*.68,-L*.4,.07,jet?.45:.24,jet?2.2:1,.03,'glass');block(g,C.glass,0,1+R+.016,-L*.4,R,.035,jet?1.9:.7,.02,'glass');
+   for(let x of [-(jet?7:1.3),jet?7:1.3]){rod(g,C.iron,[x,.4,1],[x,-1.2,1],.075);tire(g,x,-1.2,1,jet?.6:.25,jet?.35:.18);}
+   rod(g,C.iron,[0,.4,-L*.33],[0,-1.2,-L*.33],.07);tire(g,.1,-1.2,-L*.33,jet?.5:.23,.2);
+   if(jet){for(let x of [-7,7]){const engine=cylinder(g,C.cream,x,-.15,-1,1,4,'paint',24);engine.rotation.x=Math.PI/2;const inlet=cylinder(g,C.iron,x,-.15,-3.02,.84,.08);inlet.rotation.x=Math.PI/2;ring(g,C.steel,x,-.15,-3.06,.84,.07);for(let i=0;i<8;i++){const blade=block(g,C.steel,x,-.15,-3.07,.055,1.45,.04);blade.rotation.z=i*Math.PI/4;}}tag(g,'MERIDIAN|AIR',R+.02,1.5,-6,5,1.25,Math.PI/2,'dark');}
+   else{rod(g,C.iron,[0,1,-L/2-1],[0,1,-L/2-1.4],.1);for(let angle of [0,Math.PI/2]){const blade=block(g,C.iron,0,1,-L/2-1.4,.12,2.5,.06,.035);blade.rotation.z=angle;}tag(g,'M-07',.66,1.3,2,.9,.35,Math.PI/2,'dark');}
+  }
   sources[kind]=g;return g.clone();
  }
  function vehicle(g,kind){

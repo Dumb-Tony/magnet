@@ -9,7 +9,7 @@ const FieldNotes=(()=>{
   {name:'City landmarks',detail:'Find 5 water towers, trams or skyline spires.',kinds:['tower','tram','sculpture'],target:5},
   {name:'Working on the railroad',detail:'Collect 12 excavators or tank wagons.',kinds:['excavator','tankcar'],target:12},
   {name:'Harbor master',detail:'Collect 8 tugboats or dock cranes.',kinds:['tugboat','crane'],target:8},
-  {name:'One of everything',detail:'Discover every collectible type.',target:34,unique:true}
+  {name:'One of everything',detail:'Discover every collectible type.',target:Object.keys(defs).length,unique:true}
  ];
  let found=new Set(),awarded=new Set(),dirty=true;
  function count(c){if(c.unique)return new Set([...found].map(id=>objects[id]?.kind)).size;let n=0;for(const id of found){const o=objects[id];if(o&&(c.region===undefined||o.region===c.region)&&(!c.kinds||c.kinds.includes(o.kind)))n++;}return n;}

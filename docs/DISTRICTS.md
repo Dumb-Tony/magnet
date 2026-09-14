@@ -4,12 +4,12 @@ The user asked for a fixed magnet core, a physical lopsided pile that remains na
 
 ## What is playable
 
-One continuous six-district course, 790 collectible objects and 34 object types. See [the railworks and dry docks expansion](RAIL_AND_DOCKS.md) for the new route, optional goals and travel. The 64 cm core never changes size. There is no growing filler sphere. Eligible objects now crumple on pickup; their final attachment poses are retained as subsequent objects join the pile. See [the visual and crushing pass](CRUSHING.md).
+One continuous seven-district course, 967 collectible objects and 40 object types. See [the railworks and dry docks expansion](RAIL_AND_DOCKS.md) for the new route, optional goals and travel. The 64 cm core never changes size. There is no growing filler sphere. Eligible objects now crumple on pickup; their final attachment poses are retained as subsequent objects join the pile. See [the visual and crushing pass](CRUSHING.md).
 
 1. Workshop: tabletop scraps, a ramp, shelves, a narrow optional aisle, long pipes, stools and lockers. Collect the workbench to open the yard.
 2. Salvage yard: barrels, handcarts, bicycles and skips. The forklift opens the street.
 3. Main street: hydrants, signs, parked cars and vans. The bus opens the city plaza.
-4. City plaza: kiosks, trucks, containers, water towers and an optional tram. The skyline spire opens the railworks; the locomotive then opens the dry docks, where the cargo freighter completes the route. Keep exploring afterward to fill the collection checklist.
+4. City plaza: kiosks, trucks, containers, water towers and an optional tram. The skyline spire opens the railworks; the locomotive then opens the dry docks, where the cargo freighter opens Meridian Airfield. Gather ground vehicles, propeller planes and control towers before taking the airliner. Keep exploring afterward to fill the collection checklist.
 
 Each later district has an off-route rebuild corner with ascending small-to-medium salvage. No countdown, failure timer, delivery bay, currency, upgrades or multiplayer. This is a compact city district, not an entire destructible city.
 
@@ -32,7 +32,7 @@ Physical span and magnetic carrying strength are separate. Span comes from the a
 
 ## Readability and comfort
 
-Perspective follow camera, keyboard/mouse orbit, a district minimap, goal arrow, visible exit barriers, collectible-type checklist, contextual pickup hints and a brief generated pickup sound. Reduced-motion mode stabilizes the camera's vertical target; low graphics disables shadows and reduces pixel density. Optional toggle attraction and automatic unsticking. The masonry façades and painted workshop fixtures are visibly environmental obstacles, not collectible metal models.
+Perspective follow camera, keyboard/mouse orbit, a district minimap, goal arrow, visible exit barriers, collectible-type checklist, contextual pickup hints and a brief generated pickup sound. Reduced-motion mode stabilizes the camera's vertical target; low graphics disables shadows and the depth-aware finishing pass, and reduces pixel density. Optional toggle attraction and automatic unsticking. The masonry façades and painted workshop fixtures are visibly environmental obstacles, not collectible metal models.
 
 ## Saving
 
@@ -42,8 +42,8 @@ The current version saves locally every 20 simulation seconds, on milestones and
 
 Open `prototypes/m1/index.html` with adjacent `pile.js`, `materials.js`, `world.js`, `crush.js`, `adventure.js` and `vendor/` intact. Locally bundled Three.js 0.160.1 and its MIT license remain unchanged. No external requests or build step. The previous 3D experiment is `growth-first.html`; the original 2D game is `delivery-2d.html`. Tests for those older versions remain separate.
 
-The course lives in `world.js`, detailed collectible models in `detail-models.js`, surface maps in `materials.js`, reflected lighting in `lighting.js`, crushing in `crush.js`, attachment packing in `pile.js`, and progression/input/save/UI in `adventure.js`. Keep all adjacent scripts for offline use. `showroom.html` provides a close-up interactive gallery. See [the object art pass](OBJECT_ART.md). Milestone definitions remain centralized in the `regions` array and goal flags.
+The course lives in `world.js`, `expansion.js` and `airfield.js`, world scenery and the graphics finishing pass in `world-art.js`, detailed collectible models in `detail-models.js`, surface maps in `materials.js`, reflected lighting in `lighting.js`, crushing in `crush.js`, attachment packing in `pile.js`, and progression/input/save/UI in `adventure.js`. Keep all adjacent scripts for offline use. `showroom.html` provides a close-up interactive gallery. See [the object art pass](OBJECT_ART.md). Milestone definitions remain centralized in the `regions` array and goal flags.
 
 ## Limits and next human gate
 
-The new full route is tested through automation, not five fresh human players. Approximate contacts, support-height changes and assisted rolling still need feel testing. Camera clearance lifts over nearby scenery but is not a general occlusion solver. Models are procedural low-poly placeholders. Desktop keyboard and WebGL required; no gamepad, touch navigation or full remapping yet. More content should follow feedback on this loop, rather than substituting for that feedback.
+The new full route is tested through automation, not five fresh human players. Approximate contacts, support-height changes and assisted rolling still need feel testing. Camera clearance lifts over nearby scenery but is not a general occlusion solver. Models are authored procedural miniatures, with simplified silhouettes and crushed forms rather than simulated material fracture. Desktop keyboard and WebGL required; no gamepad, touch navigation or full remapping yet. More content should follow feedback on this loop, rather than substituting for that feedback.

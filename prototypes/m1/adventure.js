@@ -15,7 +15,8 @@ const regions=[
  {name:'MAIN STREET',goal:'bus',hint:'Parked cars and vans build enough pull for the bus.',exit:211,spawn:[111,0,0]},
  {name:'CITY PLAZA',goal:'sculpture',hint:'Collect the tram and street furniture. Take the skyline spire.',exit:410,spawn:[229,0,0]},
  {name:'THE RAILWORKS',goal:'locomotive',hint:'Gather tank wagons and excavators. Take the locomotive.',exit:650,spawn:[438,0,0]},
- {name:'THE DRY DOCKS',goal:'freighter',hint:'Collect tugboats and dock cranes. Bring home the freighter.',exit:WORLD_END,spawn:[685,0,0]}
+ {name:'THE DRY DOCKS',goal:'freighter',hint:'Collect tugboats and dock cranes. Bring home the freighter.',exit:1020,spawn:[685,0,0]},
+ {name:'MERIDIAN AIRFIELD',goal:'airliner',hint:'Gather ground equipment and aircraft. Take the airliner.',exit:WORLD_END,spawn:[1052,0,0]}
 ];
 let objects=[],geoCache={},goals=new Set(),seen=new Set(),stage=0,state='start',p=new T.Vector3(-3,2.32,.7),v=new T.Vector3(),yaw=0,pitch=.68,elapsed=0,cooldown=0,nudgeCooldown=0,stuck=0,nudges=0,rescues=0,last=0,acc=0,stepNumber=0,toastTimer=0,saveTimer=0,storageOK=true,saveData=null,frameMs=0,physicsMs=0,power=CORE,keys=new Set(),dirtyUI=true;
 let settings={sound:false,reduced:false,quality:'high',invert:false,autoHelp:true,fieldToggle:false},audio=null,lastSound=0,fieldLatched=false;
@@ -50,7 +51,7 @@ function collect(item){
  if(item.goal&&!goals.has(item.kind)){
    goals.add(item.kind);
    if(stage<regions.length-1&&regions[stage].goal===item.kind){stage++;message(regions[stage].name+' — the way ahead is open.');}
-   else if(item.kind===regions.at(-1).goal){state='result';keys.clear();fieldLatched=false;message('One little magnet. Six districts of metal.');panel();}
+   else if(item.kind===regions.at(-1).goal){state='result';keys.clear();fieldLatched=false;message('One little magnet. Seven districts of metal.');panel();}
    save();
  } else if(item.landmark)message('The tram is yours. Find the skyline spire.');
 }
@@ -63,7 +64,7 @@ function repel(){
  for(const a of removed){const item=a.item,worldQ=rolling.quaternion.clone().multiply(item.mesh.quaternion);item.mesh.removeFromParent();scene.add(item.mesh);item.mesh.quaternion.copy(worldQ);item.collected=false;const angle=yaw+Math.PI+(i++-removed.length/2)*.4;item.pos.copy(p).add(new T.Vector3(Math.sin(angle),.1,Math.cos(angle)).multiplyScalar(pile.extent+item.bound+2));item.pos.x=T.MathUtils.clamp(item.pos.x,-23,WORLD_END-5);item.pos.z=T.MathUtils.clamp(item.pos.z,-areaWidth(item.pos.x)+3,areaWidth(item.pos.x)-3);item.vel.set(Math.sin(angle)*7,4,Math.cos(angle)*7);item.cool=2;item.mesh.position.copy(item.pos);}
  refreshPile();v.y=4;v.x+=Math.sin(yaw)*4;v.z-=Math.cos(yaw)*4;message(removed.length?'Loose again. Your scrap is still out there.':'Magnetic burst.');
 }
-function areaWidth(x){return x<25?21:x<94?34:x<211?43:x<410?73:x<650?108:140;}
+function areaWidth(x){return x<25?21:x<94?34:x<211?43:x<410?73:x<650?108:x<1020?140:195;}
 const tmp=new T.Vector3();
 function support(proxies){let h=CORE;for(const c of proxies){const floor=terrain(p.x+c.center.x,p.z+c.center.z);if(floor<p.y+.35)h=Math.max(h,floor+c.r-c.center.y);}return h;}
 function obstacleCollision(proxies,move){
@@ -126,7 +127,7 @@ function step(input){
 function panel(){
  $('overlay').hidden=state==='play';if(state==='play')return;
  const result=state==='result',paused=state==='paused';
- $('card').innerHTML='<div class="eyebrow">MAGNET / SIX DISTRICTS. ONE TINY CORE.</div><h1>'+(result?'That escalated<br>beautifully.':paused?'Hold that<br>thought.':'Small core.<br>Huge mess.')+'</h1><p>'+(result?'From the workbench to the dry docks. '+pile.parts.length+' objects, all built around the same little magnet.':paused?'Your pile is saved locally. Keep rolling whenever you’re ready.':'Make a lopsided rolling pile of real objects. Start in the workshop, spill into the yard, and take the city piece by piece.')+'</p><button id="go">'+(result?'Keep exploring':paused?'Keep rolling':'Start a new pile')+'</button>'+(!paused&&!result&&saveData?'<button id="continue">Continue saved pile</button>':'')+'<p class="fine">WASD roll · Space attract · F nudge · Shift shed<br>Six milestones, no time pressure. Backspace gets you unstuck.</p>';
+ $('card').innerHTML='<div class="eyebrow">MAGNET / SEVEN DISTRICTS. ONE TINY CORE.</div><h1>'+(result?'That escalated<br>beautifully.':paused?'Hold that<br>thought.':'Small core.<br>Huge mess.')+'</h1><p>'+(result?'From the workbench to the runway. '+pile.parts.length+' objects, all built around the same little magnet.':paused?'Your pile is saved locally. Keep rolling whenever you’re ready.':'Make a lopsided rolling pile of real objects. Start in the workshop, spill into the yard, and take the city piece by piece.')+'</p><button id="go">'+(result?'Keep exploring':paused?'Keep rolling':'Start a new pile')+'</button>'+(!paused&&!result&&saveData?'<button id="continue">Continue saved pile</button>':'')+'<p class="fine">WASD roll · Space attract · F nudge · Shift shed<br>Seven milestones, no time pressure. Backspace gets you unstuck.</p>';
  $('go').onclick=()=>{if(paused||result){state='play';keys.clear();panel();}else reset();};if($('continue'))$('continue').onclick=restore;
 }
 function pause(){if(state==='play'){state='paused';keys.clear();fieldLatched=false;save();panel();}else if(state==='paused'){state='play';keys.clear();panel();}}
@@ -134,12 +135,12 @@ function updateHUD(){
  if($('travel')){for(const o of $('travel').options)if(o.value!=='')o.disabled=Number(o.value)>stage;}
  $('size').firstChild.textContent=(pile.extent*2<1?(pile.extent*200).toFixed(0)+' cm':(pile.extent*2).toFixed(1)+' m')+' pile';$('phase').textContent=(stage+1)+'/'+regions.length+' · '+regions[stage].name;
  const target=objects.find(o=>o.kind===regions[stage].goal),ready=power>=target.need;
- $('objective').textContent=goals.has(regions.at(-1).goal)?'The waterfront is yours':(ready?'Take the ':'Build up for the ')+target.label.toLowerCase();
+ $('objective').textContent=goals.has(regions.at(-1).goal)?'The airfield is yours':(ready?'Take the ':'Build up for the ')+target.label.toLowerCase();
  $('progress').textContent=pile.parts.length+' objects · core stays 64 cm · '+goals.size+'/'+regions.length+' milestones';$('bar').style.width=Math.min(100,power/target.need*100)+'%';
  $('collection').textContent=seen.size+' / '+Object.keys(defs).length+' kinds found';
  $('clearSave').textContent=autosaveEnabled?'Clear saved run':'Save current run';
  if(!$('catalog').hidden)$('catalog').innerHTML=Object.entries(defs).map(([kind,d])=>'<div class="'+(seen.has(kind)?'found':'missing')+'">'+(seen.has(kind)?'✓ ':power>=d.need?'○ ':'· ')+d.label+'</div>').join('');
- const map=$('map').getContext('2d');map.clearRect(0,0,260,92);map.fillStyle='#203e36';map.fillRect(0,0,260,92);const widths=[22,30,42,52,53,61],colors=['#bba76d','#9da86f','#849a9b','#aaa39b','#a7957d','#76a7b1'];let x=0;for(let i=0;i<regions.length;i++){map.fillStyle=colors[i];map.globalAlpha=i<=stage?.65:.2;map.fillRect(x+2,15,widths[i]-4,58);x+=widths[i];}map.globalAlpha=1;map.fillStyle='#fbe7a9';map.font='9px Arial';map.fillText('SHOP  YARD   STREET    CITY     RAIL      DOCKS',4,10);const mapX=wx=>{const edges=[-25,25,94,211,410,650,WORLD_END];let i=0,offset=0;while(i<5&&wx>edges[i+1])offset+=widths[i++];return offset+T.MathUtils.clamp((wx-edges[i])/(edges[i+1]-edges[i]),0,1)*widths[i];};const mx=mapX(p.x),mz=44+p.z/150*30;map.beginPath();map.arc(mx,mz,3.4,0,Math.PI*2);map.fill();map.strokeStyle='#fff9d2';map.beginPath();map.arc(mapX(target.pos.x),44+target.pos.z/150*30,5,0,Math.PI*2);map.stroke();
+ const map=$('map').getContext('2d');map.clearRect(0,0,260,92);map.fillStyle='#203e36';map.fillRect(0,0,260,92);const widths=[18,24,34,40,43,48,53],colors=['#bba76d','#9da86f','#849a9b','#aaa39b','#a7957d','#76a7b1','#9cabb5'];let x=0;for(let i=0;i<regions.length;i++){map.fillStyle=colors[i];map.globalAlpha=i<=stage?.65:.2;map.fillRect(x+2,15,widths[i]-4,58);x+=widths[i];}map.globalAlpha=1;map.fillStyle='#fbe7a9';map.font='9px Arial';map.fillText('SHOP YARD STREET CITY  RAIL  DOCKS   AIR',4,10);const mapX=wx=>{const edges=[-25,25,94,211,410,650,1020,WORLD_END];let i=0,offset=0;while(i<6&&wx>edges[i+1])offset+=widths[i++];return offset+T.MathUtils.clamp((wx-edges[i])/(edges[i+1]-edges[i]),0,1)*widths[i];};const mx=mapX(p.x),mz=44+p.z/200*30;map.beginPath();map.arc(mx,mz,3.4,0,Math.PI*2);map.fill();map.strokeStyle='#fff9d2';map.beginPath();map.arc(mapX(target.pos.x),44+target.pos.z/200*30,5,0,Math.PI*2);map.stroke();
 }
 function render(delta){
  CrushWorkshop.update(delta);FieldNotes.update();
@@ -153,10 +154,10 @@ function render(delta){
  for(const entry of districtGates){entry.gate.visible=stage<=entry.index;entry.caption.visible=stage<=entry.index;}
  field.position.set(p.x,terrain(p.x,p.z)+.03,p.z);field.scale.setScalar(pile.rollRadius+((settings.fieldToggle?fieldLatched:keys.has('Space'))?2+Math.min(power,5):.25));field.visible=state==='play'&&!settings.reduced;
  const objective=objects.find(o=>o.kind===regions[stage].goal);const dir=objective.pos.clone().sub(p);dir.y=0;arrow.visible=state==='play'&&!goals.has(regions.at(-1).goal);arrow.position.copy(p).add(new T.Vector3(0,pile.extent+1,0));if(dir.lengthSq()>0)arrow.setDirection(dir.normalize());arrow.setLength(Math.min(5,1.4+power*.5),.5,.28);
- sun.position.set(p.x-20,p.y+40,p.z+16);sun.target.position.copy(p);sun.target.updateMatrixWorld();const span=Math.max(26,pile.extent*3);Object.assign(sun.shadow.camera,{left:-span,right:span,top:span,bottom:-span});sun.shadow.camera.updateProjectionMatrix();
+ sun.position.set(p.x-20,p.y+40,p.z+16);sun.target.position.copy(p);sun.target.updateMatrixWorld();const span=Math.max(26,pile.extent*3);Object.assign(sun.shadow.camera,{left:-span,right:span,top:span,bottom:-span,far:Math.max(100,pile.extent*4+70)});sun.shadow.camera.updateProjectionMatrix();
  toastTimer=Math.max(0,toastTimer-delta);$('toast').style.opacity=toastTimer>0?1:0;updateHUD();
  pickupFlash=Math.max(0,pickupFlash-delta);core.material.emissive.setHex(pickupFlash>0&&!settings.reduced?0x665015:0);
- renderer.render(scene,camera);frameMs=performance.now()-begin;
+ WorldArt.update(delta,settings.reduced);GraphicsPass.render();frameMs=performance.now()-begin;
  $('debug').textContent=VERSION+'\ncore radius '+core.scale.x+' (fixed)\nparts '+pile.parts.length+'/'+objects.length+' / proxies '+pile.proxies.length+'\nspan '+(pile.extent*2).toFixed(2)+' / power '+power.toFixed(2)+'\nphysics '+physicsMs.toFixed(2)+' ms / render '+frameMs.toFixed(2)+' ms\nnudges '+nudges+' / recoveries '+rescues+'\n'+p.toArray().map(n=>n.toFixed(2)).join(', ');
 }
 function frame(now){const delta=Math.min(.067,(now-last)/1000||0);last=now;if(state==='play'){acc+=delta;let count=0;while(acc>=DT&&count++<8){step();acc-=DT;}if(count>8)acc=0;}render(delta);requestAnimationFrame(frame);}
@@ -178,7 +179,7 @@ $('inspectModels').onclick=()=>{if(state==='play')pause();location.href='showroo
 $('travel').innerHTML+=[...regions].map((r,i)=>'<option value="'+i+'">'+r.name+'</option>').join('');$('travel').onchange=()=>{if($('travel').value!=='')travelTo(Number($('travel').value));$('travel').value='';$('travel').blur();};
 $('collection').onclick=()=>{$('catalog').hidden=!$('catalog').hidden;$('collection').blur();};
 const minimap=document.createElement('canvas');minimap.id='map';minimap.width=260;minimap.height=92;minimap.setAttribute('aria-label','District map: dot is your pile, ring is the next milestone.');document.body.appendChild(minimap);
-minimap.title='Click an unlocked district to travel with your pile';minimap.style.cursor='pointer';minimap.onclick=e=>{const rect=minimap.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width*260;let edge=0;for(const [i,width] of [22,30,42,52,53,61].entries()){edge+=width;if(x<edge){if(!travelTo(i))message('Collect the current milestone to open that district.');break;}}};
+minimap.title='Click an unlocked district to travel with your pile';minimap.style.cursor='pointer';minimap.onclick=e=>{const rect=minimap.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width*260;let edge=0;for(const [i,width] of [18,24,34,40,43,48,53].entries()){edge+=width;if(x<edge){if(!travelTo(i))message('Collect the current milestone to open that district.');break;}}};
 $('optionsToggle').onclick=()=>{$('optionsPanel').hidden=!$('optionsPanel').hidden;$('optionsToggle').blur();};
 for(const name of ['reduced','autoHelp','fieldToggle','quality']){const el=$(name);if(name==='quality')el.value=settings[name];else el.checked=settings[name];el.onchange=()=>{settings[name]=name==='quality'?el.value:el.checked;fieldLatched=false;settingsChanged();el.blur();};}
 $('rescue').onclick=()=>{recover();$('rescue').blur();};

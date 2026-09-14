@@ -4,7 +4,7 @@ Object.assign(defs,{
  toolbox:{need:.8,mass:8,label:'TOOLBOX'},drill:{need:.7,mass:5,label:'POWER DRILL'},vending:{need:2,mass:85,label:'VENDING MACHINE'},trafficlight:{need:2.1,mass:100,label:'TRAFFIC LIGHT'},
  excavator:{need:7,mass:2200,label:'EXCAVATOR'},tankcar:{need:8.8,mass:4200,label:'TANK WAGON'},locomotive:{need:11,mass:12000,label:'LOCOMOTIVE'},tugboat:{need:11.5,mass:9000,label:'TUGBOAT'},crane:{need:13.5,mass:18000,label:'DOCK CRANE'},freighter:{need:18,mass:65000,label:'CARGO FREIGHTER'}
 });
-const WORLD_END=1020;
+let WORLD_END=1020;
 camera.far=1800;camera.updateProjectionMatrix();scene.fog.far=1050;
 district(530,240,224,'#8b9a97');district(835,370,304,'#8da29a');
 box(environment,'#397a89',850,-1.25,260,550,.3,200);box(environment,'#397a89',850,-1.25,-260,550,.3,200);
