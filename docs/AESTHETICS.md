@@ -9,7 +9,7 @@ The world now uses separate procedural surface constructions instead of one nois
 - Brick has staggered mortar, irregular joints, chipped faces and stronger bump relief. Concrete has aggregate and hairline cracks; asphalt has dense stone and tar fissures.
 - Timber has layered grain and knots. Rubber has recessed tread. Glass has low roughness and broad diagonal reflections. Water retains animated ripples.
 
-The background now surrounds the route with two layers of hills, distant city silhouettes, tree lines and 2,200 individually positioned grass blades rendered in one instanced draw. A cooler fill light separates shadowed forms while warmer sunlight, softer shadow filtering, the existing reflected environment and depth-aware contact shading define the main shapes.
+The background now surrounds the route with two layers of hills, distant city silhouettes, tree lines and 2,200 individually positioned grass blades rendered in one instanced draw. The blades bend in a low, asynchronous wind animation, which freezes with Reduced motion. A cooler fill light separates shadowed forms while warmer sunlight, softer shadow filtering, the existing reflected environment and depth-aware contact shading define the main shapes.
 
 Ordinary pickups no longer create text notices. The brief core flash and optional sound still acknowledge collection. Milestone, recovery and save messages remain because they report uncommon state changes. The large world-space objective arrow has been removed; players can use the environment, small milestone panel and map without a pointer hovering over the pile.
 

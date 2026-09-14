@@ -12,9 +12,9 @@ Every collected mesh stays attached to the rotating ball. Its original model siz
 
 ## Controls and rules
 
-Movement is camera-relative with velocity easing, gravity and floor/table/ramp support. Rotation derives from distance traveled divided by radius. Camera follows smoothly, scales its distance with growth, and can be orbited with Q/E or dragging. No pointer lock is required.
+Movement is camera-relative with velocity easing, gravity and floor/table/ramp support. Rotation derives from distance traveled divided by radius. Camera follows smoothly, uses a restrained combination of pile span and rolling radius for its distance, and can be orbited with Q/E or dragging. No pointer lock is required.
 
-Touch pickups are automatic when large enough; Space extends pull radius. Pickup size thresholds: cans require radius 0.48, tools 0.64, wheels 0.85, stools 1.05, lockers 1.35 and bench 1.8. Radius is `0.32 * cbrt(1 + mass / 1.2)`. No carried weight slowdown; speed is `4.8 + min(radius * 2.1, 4.5)` world units/second. Input easing is 9/s. The user's speed feedback informs this decision.
+Touch pickups are automatic when large enough; Space extends pull radius. Pickup size thresholds: cans require radius 0.48, tools 0.64, wheels 0.85, stools 1.05, lockers 1.35 and bench 1.8. Magnetic power is `0.32 * cbrt(1 + mass / 1.2)`. Cruise speed combines a 7.2-unit base, a capped power contribution and a capped square-root rolling-radius contribution. It rises from 7.66 units/second at the bare core to about 27.7 for a representative launch-complex pile. Input response eases from 9/s to no less than 7/s, preserving some large-pile heft without sacrificing traversal speed. The user's speed feedback informs this curve.
 
 Shift sheds the latest five attachments and gives a small forward/upward burst. Ejected objects remain in the room, retain IDs and have a two-second pickup cooldown; burst cooldown is 1.4 seconds. There is surplus small scrap on the floor for early falls. The scripted run with deliberate shedding still reaches the workbench ending.
 

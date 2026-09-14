@@ -33,7 +33,7 @@ Physical span and magnetic carrying strength are separate. Span comes from the a
 
 ## Readability and comfort
 
-Perspective follow camera, keyboard/mouse orbit, a district minimap, goal arrow, visible exit barriers, collectible-type checklist, contextual pickup hints and a brief generated pickup sound. Reduced-motion mode stabilizes the camera's vertical target; low graphics disables shadows and the depth-aware finishing pass, and reduces pixel density. Optional toggle attraction and automatic unsticking. The masonry façades and painted workshop fixtures are visibly environmental obstacles, not collectible metal models.
+Perspective follow camera, keyboard/mouse orbit, a district minimap, visible exit barriers, collectible-type checklist, contextual nearby-object hints and a brief generated pickup sound. Discovery stays uncluttered: there is no world-space goal arrow, minimap objective marker or routine pickup toast. Reduced-motion mode stabilizes the camera's vertical target; low graphics disables shadows and the depth-aware finishing pass, and reduces pixel density. Optional toggle attraction and automatic unsticking. The masonry façades and painted workshop fixtures are visibly environmental obstacles, not collectible metal models.
 
 ## Saving
 

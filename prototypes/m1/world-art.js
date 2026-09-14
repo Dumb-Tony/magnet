@@ -10,7 +10,10 @@ const WorldArt=(()=>{
  const landscape=new T.Mesh(new T.PlaneGeometry(3400,2200),new T.MeshStandardMaterial({map:grassMap,color:'#b4c598',roughness:1}));landscape.rotation.x=-Math.PI/2;landscape.position.set(720,-.5,0);landscape.receiveShadow=true;scene.add(landscape);
  // Individual blades catch light along the verges while one instanced draw keeps them inexpensive.
  const bladeGeo=new T.BufferGeometry();bladeGeo.setAttribute('position',new T.Float32BufferAttribute([-.055,0,0,.055,0,0,0,.7,0,0,0,-.055,0,0,.055,0,.7,0],3));bladeGeo.computeVertexNormals();
- const grassBlades=new T.InstancedMesh(bladeGeo,new T.MeshStandardMaterial({color:'#6f8f4d',roughness:1,side:T.DoubleSide,vertexColors:true}),2200),dummy=new T.Object3D();
+ const grassTime={value:0},grassMaterial=new T.MeshStandardMaterial({color:'#6f8f4d',roughness:1,side:T.DoubleSide,vertexColors:true});
+ grassMaterial.onBeforeCompile=shader=>{shader.uniforms.grassTime=grassTime;shader.vertexShader='uniform float grassTime;\n'+shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nfloat bladeBend=position.y*position.y*.075;\ntransformed.x+=sin(grassTime*1.7+instanceMatrix[3].x*.08+instanceMatrix[3].z*.04)*bladeBend;\ntransformed.z+=cos(grassTime*1.35+instanceMatrix[3].z*.07)*bladeBend*.55;');};
+ grassMaterial.customProgramCacheKey=()=> 'wind-swept-grass-v1';
+ const grassBlades=new T.InstancedMesh(bladeGeo,grassMaterial,2200),dummy=new T.Object3D();
  const verge=x=>x<25?25:x<94?39:x<211?51:x<410?84:x<650?119:x<1020?165:x<1530?208:252;
  for(let i=0;i<2200;i++){const x=-70+rnd()*2260,z=(rnd()>.5?1:-1)*(verge(x)+rnd()*70);dummy.position.set(x,-.48,z);dummy.rotation.set(0,rnd()*Math.PI,.12*(rnd()-.5));const s=.55+rnd()*.9;dummy.scale.set(s,s,s);dummy.updateMatrix();grassBlades.setMatrixAt(i,dummy.matrix);grassBlades.setColorAt(i,new T.Color(i%3?'#789a55':'#a0ad5f'));}grassBlades.receiveShadow=true;scene.add(grassBlades);
  // Workshop: structural beams, wall panels, ceiling lamps and constructed storage fixtures.
@@ -68,7 +71,7 @@ const WorldArt=(()=>{
  const sky=new T.Mesh(new T.SphereGeometry(2350,24,16),skyMat);sky.frustumCulled=false;sky.renderOrder=-100;scene.add(sky);
  scene.background=new T.Color('#b7ccd0');scene.fog.color.set('#b7ccd0');scene.children.filter(o=>o.isHemisphereLight).forEach(o=>{o.color.set('#d9edf2');o.groundColor.set('#625447');o.intensity=1.32;});sun.color.set('#ffd39a');sun.intensity=3.45;sun.shadow.radius=3;sun.shadow.blurSamples=8;const fill=new T.DirectionalLight('#8ebbd0',.72);fill.position.set(24,18,-32);scene.add(fill);renderer.toneMappingExposure=1.06;
  environment.traverse(m=>{if(m.isMesh&&m.material.map&&m.material.color.getHexString()==='397a89')water.push(m.material.map);});
- return {update(dt,reduced){if(!reduced)clock+=dt;sky.position.copy(camera.position);skyMat.uniforms.time.value=clock;for(const map of water)map.offset.x=clock*.004;},stats:{components:packed.userData.rawParts,batches:packed.children.length,grassBlades:2200}};
+ return {update(dt,reduced){if(!reduced)clock+=dt;sky.position.copy(camera.position);skyMat.uniforms.time.value=clock;grassTime.value=clock;for(const map of water)map.offset.x=clock*.004;},stats:{components:packed.userData.rawParts,batches:packed.children.length,grassBlades:2200}};
 })();
 
 const GraphicsPass=(()=>{

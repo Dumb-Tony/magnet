@@ -8,7 +8,7 @@ Explore the workshop, salvage yard, street, city, railworks, dry docks, airfield
 
 [Inspect all 45 detailed objects](https://dumb-tony.github.io/magnet/showroom.html) · [Object art notes](docs/OBJECT_ART.md)
 
-A graphics pass adds materially distinct roads, masonry, wood, metal, glass, vehicle paint, landscaping, atmospheric sky and depth-aware shading. High and Low graphics settings are available. See the [environmental aesthetics pass](docs/AESTHETICS.md) and [graphics and airfield notes](docs/GRAPHICS_AND_AIRFIELD.md).
+A graphics pass adds materially distinct roads, masonry, wood, metal, glass, vehicle paint, landscaping, wind-swept grass, atmospheric sky and depth-aware shading. High and Low graphics settings are available. Large piles also gain cruising speed while retaining slightly heavier response. See the [environmental aesthetics pass](docs/AESTHETICS.md), [movement tuning](docs/MOVEMENT.md) and [graphics and airfield notes](docs/GRAPHICS_AND_AIRFIELD.md).
 
 ![Detailed workshop objects](docs/images/detail-workshop.png)
 
@@ -34,6 +34,7 @@ See [docs/DISTRICTS.md](docs/DISTRICTS.md) for current design/limitations and [d
 ## Tests
 
 - `node tests/graphics-browser.cjs`: previous-save migration, original 790 IDs, High/Low rendering, resizing, shader errors and six new model previews.
+- `node tests/movement-scaling-browser.cjs`: starting response, size-scaled cruising speed, camera pullback and late-game visible pace.
 
 - `node tests/detail-browser.cjs`: all 45 model bounds and geometry reuse, mesh batching, gallery controls, crushed previews and narrow viewport.
 

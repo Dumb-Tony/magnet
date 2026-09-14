@@ -68,6 +68,14 @@ function repel(){
 function areaWidth(x){return x<25?21:x<94?34:x<211?43:x<410?73:x<650?108:x<1020?140:x<1530?195:240;}
 const tmp=new T.Vector3();
 function support(proxies){let h=CORE;for(const c of proxies){const floor=terrain(p.x+c.center.x,p.z+c.center.z);if(floor<p.y+.35)h=Math.max(h,floor+c.r-c.center.y);}return h;}
+function motionProfile(){
+ const radius=Math.max(CORE,pile.rollRadius),size=Math.max(0,radius-CORE);
+ return{
+  cruise:7.2+Math.min(power*1.45,14)+Math.min(Math.sqrt(size)*2.2,7),
+  response:9-Math.min(2,size*.2),
+  camera:6+pile.extent*1.25+radius*.8
+ };
+}
 function obstacleCollision(proxies,move){
  let hits=0;
  for(const o of obstacles){
@@ -88,7 +96,7 @@ function step(input){
  const attract=input?.attract??(settings.fieldToggle?fieldLatched:keys.has('Space'));
  if(keys.has('KeyQ'))yaw+=DT*1.4;if(keys.has('KeyE'))yaw-=DT*1.4;
  const move=new T.Vector3(dx,0,dz);if(move.length()>1)move.normalize();move.applyAxisAngle(T.Object3D.DEFAULT_UP,yaw);
- const speed=5+Math.min(power*2.4,14),blend=1-Math.exp(-8*DT);v.x=T.MathUtils.lerp(v.x,move.x*speed,blend);v.z=T.MathUtils.lerp(v.z,move.z*speed,blend);v.y-=18*DT;
+ const motion=motionProfile(),speed=motion.cruise,blend=1-Math.exp(-motion.response*DT);v.x=T.MathUtils.lerp(v.x,move.x*speed,blend);v.z=T.MathUtils.lerp(v.z,move.z*speed,blend);v.y-=18*DT;
  const before=p.clone();p.addScaledVector(v,DT);
  // Only the core is constrained by broad district boundaries; open gates are generous.
  p.x=T.MathUtils.clamp(p.x,-24,regions[stage].exit-1);p.z=T.MathUtils.clamp(p.z,-areaWidth(p.x),areaWidth(p.x));
@@ -146,7 +154,7 @@ function updateHUD(){
 function render(delta){
  CrushWorkshop.update(delta);FieldNotes.update();
  const begin=performance.now();root.position.copy(p);
- const target=p.clone().add(new T.Vector3(0,Math.min(3,pile.rollRadius*.25),0)),distance=5.5+pile.extent*2.4;
+ const target=p.clone().add(new T.Vector3(0,Math.min(3,pile.rollRadius*.25),0)),distance=motionProfile().camera;
  if(settings.reduced)target.y=terrain(p.x,p.z)+pile.rollRadius+Math.min(3,pile.rollRadius*.25);
  const desired=target.clone().add(new T.Vector3(Math.sin(yaw)*Math.cos(pitch)*distance,Math.sin(pitch)*distance,Math.cos(yaw)*Math.cos(pitch)*distance));
  // Keep the camera above near scenery instead of looking through a wall.
@@ -188,5 +196,5 @@ $('clearSave').onclick=()=>{
  else{autosaveEnabled=true;save();message('Pile saved. Autosave back on.');}
  $('clearSave').textContent=autosaveEnabled?'Clear saved run':'Save current run';$('clearSave').blur();
 };
-window.Magnet3D={reset,step,repel,nudge,recover,pause,save,restore,draw:render,snapshot:()=>({version:VERSION,state,coreRadius:core.scale.x,power,radius:pile.extent,rollRadius:pile.rollRadius,mass:pile.mass,count:pile.parts.length,total:objects.length,elapsed,stage,goals:[...goals],position:p.toArray(),velocity:v.toArray(),nudges,rescues,frameMs,physicsMs}),get objects(){return objects;},get pile(){return pile;},get position(){return p;},get camera(){return camera;},get renderer(){return renderer;}};
+window.Magnet3D={reset,step,repel,nudge,recover,pause,save,restore,draw:render,motion:()=>({...motionProfile()}),snapshot:()=>({version:VERSION,state,coreRadius:core.scale.x,power,radius:pile.extent,rollRadius:pile.rollRadius,mass:pile.mass,count:pile.parts.length,total:objects.length,elapsed,stage,goals:[...goals],position:p.toArray(),velocity:v.toArray(),nudges,rescues,frameMs,physicsMs}),get objects(){return objects;},get pile(){return pile;},get position(){return p;},get camera(){return camera;},get renderer(){return renderer;}};
 FieldNotes.install();reset(false);settingsChanged();requestAnimationFrame(frame);
