@@ -55,7 +55,7 @@ class MagneticPile {
     this.rollRadius=radii.length?Math.max(this.coreRadius,radii[Math.floor(radii.length*.65)]):this.coreRadius;
     // Deeply buried meshes cannot contribute to the silhouette, but drawing all
     // of them makes very large piles expensive. Physics and saved parts remain.
-    const visualLimit=440,latest=40;
+    const visualLimit=360,latest=40;
     if(this.parts.length>visualLimit){
       const outer=new Set(this.parts.map((part,index)=>({index,r:Math.max(...part.cells.map(c=>c.center.length()+c.r))})).sort((a,b)=>b.r-a.r).slice(0,visualLimit-latest).map(x=>x.index));
       for(let i=0;i<this.parts.length;i++)this.parts[i].item.mesh.visible=outer.has(i)||i>=this.parts.length-latest;

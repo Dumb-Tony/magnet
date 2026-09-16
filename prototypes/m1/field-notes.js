@@ -9,6 +9,7 @@ const FieldNotes=(()=>{
   {name:'City landmarks',detail:'Find 5 water towers, trams or skyline spires.',kinds:['tower','tram','sculpture'],target:5},
   {name:'Working on the railroad',detail:'Collect 12 excavators or tank wagons.',kinds:['excavator','tankcar'],target:12},
   {name:'Harbor master',detail:'Collect 8 tugboats or dock cranes.',kinds:['tugboat','crane'],target:8},
+  {name:'Feed the furnace',detail:'Collect 10 transformers, dozers or turbine generators.',kinds:['transformer','bulldozer','turbine'],target:10},
   {name:'One of everything',detail:'Discover every collectible type.',target:Object.keys(defs).length,unique:true}
  ];
  let found=new Set(),awarded=new Set(),dirty=true;

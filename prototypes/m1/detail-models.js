@@ -143,6 +143,35 @@ const DetailedModels=(()=>{
   if(kind==='radar'){block(g,C.iron,0,.4,0,5,.8,5,.08);for(let x of [-2,2])for(let z of [-2,2])rod(g,C.steel,[x,.8,z],[x*.45,5,z*.45],.12);cylinder(g,C.steel,0,5,0,.7,1.1);const dish=part(g,new T.SphereGeometry(4.5,28,14,0,Math.PI*2,0,.62),C.cream,[0,7,0]);dish.scale.y=.25;dish.rotation.x=-.68;rod(g,C.iron,[0,7,0],[0,10,-2],.11);cylinder(g,C.yellow,0,10,-2,.25,.7);tag(g,'DEEP SPACE',2.51,2.2,0,2.4,.8,Math.PI/2,'dark');}
   if(kind==='launchtruck'){block(g,C.iron,0,.2,0,11,1.2,18,.15);for(let x of [-4.4,4.4])for(let z=-7;z<=7;z+=2){tire(g,x,-.55,z,1,.7);}block(g,C.yellow,0,1.2,0,9.6,1,16,.12);for(let z of [-6,6])block(g,C.cream,0,2.7,z,8,2.2,3,.15);for(let x of [-4.6,4.6])for(let z of [-7.5,7.5])rod(g,C.steel,[x,1,z],[x,4,z],.08);for(let x of [-4.6,4.6])rod(g,C.steel,[x,4,-7.5],[x,4,7.5],.08);tag(g,'CRAWLER|TRANSPORT',4.82,2,0,3.8,1.4,Math.PI/2,'hazard');}
   if(kind==='rocket'){const body=cylinder(g,C.cream,0,19,0,3.2,38,'paint',32);for(let y of [3,14,27,36])ring(g,y===14?C.teal:C.steel,0,y,0,3.24,.14,'y');const nose=part(g,new T.ConeGeometry(3.2,9,32),C.cream,[0,42.5,0]);for(let i=0;i<4;i++){const a=i*Math.PI/2,x=Math.sin(a)*3.2,z=Math.cos(a)*3.2;const fin=block(g,C.teal,x,4,z,4,.3,7,.08);fin.rotation.y=-a;const bell=part(g,new T.ConeGeometry(1.25,2.5,20,1,true),C.iron,[Math.sin(a)*1.35,-1.2,Math.cos(a)*1.35]);bell.rotation.x=Math.PI;}tag(g,'MAGNET VIII|TO ORBIT',3.22,23,0,5,2,Math.PI/2,'dark');}
+  if(kind==='transformer'){
+   block(g,C.iron,0,-1,0,7,.8,6,.16,'steel');block(g,C.teal,0,1.5,0,6,4.2,5,.18,'paint');
+   for(let x=-2.6;x<=2.6;x+=.65)for(let z of [-2.55,2.55])block(g,C.iron,x,1.5,z,.28,3.7,.18,.05,'steel');
+   for(let x of [-2,0,2]){for(let y=4;y<7;y+=.42)ring(g,C.cream,x,y,0,.42,.08,'y');cylinder(g,C.iron,x,5.5,0,.18,3.2);}
+   for(let x of [-3.2,3.2])for(let z of [-2.3,2.3])block(g,C.iron,x,-1.65,z,.6,.45,.7,.08);tag(g,'GRID 09|380 kV',3.02,1.5,0,2.4,1.1,Math.PI/2,'hazard');
+  }
+  if(kind==='bulldozer'){
+   for(let x of [-2.8,2.8]){block(g,C.iron,x,-.8,0,1.25,1.15,7.5,.18,'rubber');for(let z=-3;z<=3;z+=.75)tire(g,x,-.8,z,.55,.68);for(let z=-3.45;z<=3.45;z+=.34)block(g,C.steel,x,-.15,z,1.3,.12,.25,.025,'steel');}
+   block(g,C.yellow,0,.25,.4,4.8,1.6,5.8,.14,'paint');block(g,C.iron,0,2,-.5,3.8,2.7,3.1,.12);for(let x of [-1.35,0,1.35])block(g,C.glass,x,2.2,-2.07,1.05,1.35,.04,.02,'glass');
+   for(let x of [-2.4,2.4])rod(g,C.yellow,[x,.3,-2.6],[x,-.1,-5.2],.22,'paint');const blade=block(g,C.yellow,0,.1,-5.5,7.6,2.6,.45,.16,'paint');blade.rotation.x=-.12;for(let x=-3.4;x<=3.4;x+=.68)block(g,C.iron,x,-1.15,-5.73,.09,.65,.25,.04,'steel');tag(g,'TITAN|D-90',2.43,.5,.5,2.1,.85,Math.PI/2,'dark');
+  }
+  if(kind==='turbine'){
+   block(g,C.iron,0,-1,0,8,.9,15,.18,'steel');const shell=cylinder(g,C.cream,0,1,0,3.2,13,'paint',32);shell.rotation.x=Math.PI/2;
+   for(let z of [-5.8,-2.8,0,2.8,5.8])ring(g,C.teal,0,1,z,3.24,.1);for(let x of [-2.4,2.4])for(let z of [-5,5])block(g,C.iron,x,-1.7,z,.75,.5,1,.1);
+   const intake=cylinder(g,C.iron,0,1,-6.6,2.7,.3,'steel',32);intake.rotation.x=Math.PI/2;for(let i=0;i<12;i++){const a=i*Math.PI/6,blade=block(g,C.steel,Math.cos(a)*1.25,1+Math.sin(a)*1.25,-6.82,.22,2.2,.12,.03,'steel');blade.rotation.z=a;}
+   tag(g,'TITAN GRID|TURBINE 4',3.22,1,1,3,1.2,Math.PI/2,'dark');
+  }
+  if(kind==='ladle'){
+   const bowl=part(g,new T.CylinderGeometry(4.2,3.1,6,28,1,true),C.iron,[0,1,0]);for(let y of [-2,0,3.9])ring(g,C.steel,0,y,0,y>3?4.22:y<0?3.2:3.65,.14,'y');
+   for(let x of [-5.5,5.5]){rod(g,C.yellow,[x,-2.8,0],[x,5.5,0],.32,'paint');cylinder(g,C.iron,x,1,0,.75,.8).rotation.z=Math.PI/2;block(g,C.iron,x,-3.1,0,1.5,.8,2,.12);}
+   rod(g,C.yellow,[-5.5,5.5,0],[5.5,5.5,0],.35,'paint');for(let x of [-3.5,3.5])ring(g,C.iron,x,6.2,0,.7,.18,'z');tag(g,'MOLTEN|450 T',4.23,1,0,2.8,1.4,Math.PI/2,'hazard');
+  }
+  if(kind==='blastfurnace'){
+   cylinder(g,C.iron,0,14,0,8,28,'steel',32);const belly=cylinder(g,C.paint,0,32,0,11,14,'paint',32);const stack=cylinder(g,C.iron,0,47,0,6,18,'steel',32);const crown=part(g,new T.ConeGeometry(7,7,32),C.cream,[0,59,0]);
+   for(let y of [1,8,20,26,38,44,55])ring(g,C.steel,0,y,0,y>=44?6.05:y>=26&&y<=38?11.05:8.05,.18,'y');
+   for(let i=0;i<8;i++){const a=i*Math.PI/4,x=Math.sin(a)*12,z=Math.cos(a)*12;rod(g,C.yellow,[x,-1,z],[x*.72,38,z*.72],.3,'paint');for(let y=4;y<38;y+=7)rod(g,C.steel,[Math.sin(a)*8,y,Math.cos(a)*8],[Math.sin(a)*12,y,Math.cos(a)*12],.12);}
+   for(let a=0;a<Math.PI*2;a+=Math.PI/2){const x=Math.sin(a)*8,z=Math.cos(a)*8;rod(g,C.iron,[x,18,z],[Math.sin(a)*18,18,Math.cos(a)*18],.7);const cap=cylinder(g,C.iron,Math.sin(a)*18,12,Math.cos(a)*18,2.4,12,'steel',20);}
+   for(let y=4;y<55;y+=3.2)for(let side of [-1,1])rod(g,C.steel,[side*8.2,y,0],[side*8.2,y+1.8,0],.08);tag(g,'TITAN IX|FURNACE',8.02,31,0,6,2.4,Math.PI/2,'hazard');
+  }
   sources[kind]=g;return g.clone();
  }
  function vehicle(g,kind){

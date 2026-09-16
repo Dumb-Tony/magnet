@@ -2,7 +2,7 @@
 
 [Play Magnet](https://dumb-tony.github.io/magnet/) · [Inspect the models](https://dumb-tony.github.io/magnet/showroom.html)
 
-The active game now has eight districts, 1,116 collectible objects, 45 object types, 33 crushed variants and eight optional Field notes objectives. The original 967 IDs and save version are preserved. Existing runs migrate forward; piles saved before the denser packing pass tighten once on restoration.
+This pass brought the game to eight districts, 1,116 collectible objects, 45 object types, 33 crushed variants and eight optional Field notes objectives. The later Titan Foundry expansion preserves those original IDs and extends the current totals; see [Titan Foundry](TITAN_FOUNDRY.md).
 
 ## World graphics
 

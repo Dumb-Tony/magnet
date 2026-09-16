@@ -16,8 +16,10 @@ const regions=[
  {name:'THE RAILWORKS',goal:'locomotive',hint:'Gather tank wagons and excavators. Take the locomotive.',exit:650,spawn:[438,0,0]},
  {name:'THE DRY DOCKS',goal:'freighter',hint:'Collect tugboats and dock cranes. Bring home the freighter.',exit:1020,spawn:[685,0,0]},
  {name:'MERIDIAN AIRFIELD',goal:'airliner',hint:'Gather ground equipment and aircraft. Take the airliner.',exit:1530,spawn:[1052,0,0]},
- {name:'ORBITAL LAUNCH COMPLEX',goal:'rocket',hint:'Gather spacecraft and launch machinery. Take the orbital rocket.',exit:WORLD_END,spawn:[1560,0,0]}
+ {name:'ORBITAL LAUNCH COMPLEX',goal:'rocket',hint:'Gather spacecraft and launch machinery. Take the orbital rocket.',exit:2120,spawn:[1560,0,0]},
+ {name:'TITAN FOUNDRY',goal:'blastfurnace',hint:'Gather grid machinery and molten-metal equipment. Take the titan blast furnace.',exit:WORLD_END,spawn:[2140,0,0]}
 ];
+const mapWidths=[13,16,21,25,27,30,34,43,51],mapEdges=[-25,25,94,211,410,650,1020,1530,2120,WORLD_END];
 let objects=[],geoCache={},goals=new Set(),seen=new Set(),stage=0,state='start',p=new T.Vector3(-3,2.32,.7),v=new T.Vector3(),yaw=0,pitch=.68,elapsed=0,cooldown=0,nudgeCooldown=0,stuck=0,nudges=0,rescues=0,last=0,acc=0,stepNumber=0,toastTimer=0,saveTimer=0,storageOK=true,saveData=null,frameMs=0,physicsMs=0,power=CORE,keys=new Set(),dirtyUI=true;
 let settings={sound:false,reduced:false,quality:'high',invert:false,autoHelp:true,fieldToggle:false},audio=null,lastSound=0,fieldLatched=false;
 try{settings={...settings,...JSON.parse(localStorage.getItem(OPTIONS)||'{}')};saveData=JSON.parse(localStorage.getItem(SAVE)||'null');}catch{storageOK=false;}
@@ -52,7 +54,7 @@ function collect(item){
  if(item.goal&&!goals.has(item.kind)){
    goals.add(item.kind);
    if(stage<regions.length-1&&regions[stage].goal===item.kind){stage++;message(regions[stage].name+' — the way ahead is open.');}
-   else if(item.kind===regions.at(-1).goal){state='result';keys.clear();fieldLatched=false;message('One little magnet. Eight districts of metal.');panel();}
+   else if(item.kind===regions.at(-1).goal){state='result';keys.clear();fieldLatched=false;message('One little magnet. Nine districts of metal.');panel();}
    save();
  }
 }
@@ -65,7 +67,7 @@ function repel(){
  for(const a of removed){const item=a.item,worldQ=rolling.quaternion.clone().multiply(item.mesh.quaternion);item.mesh.removeFromParent();scene.add(item.mesh);item.mesh.quaternion.copy(worldQ);item.collected=false;const angle=yaw+Math.PI+(i++-removed.length/2)*.4;item.pos.copy(p).add(new T.Vector3(Math.sin(angle),.1,Math.cos(angle)).multiplyScalar(pile.extent+item.bound+2));item.pos.x=T.MathUtils.clamp(item.pos.x,-23,WORLD_END-5);item.pos.z=T.MathUtils.clamp(item.pos.z,-areaWidth(item.pos.x)+3,areaWidth(item.pos.x)-3);item.vel.set(Math.sin(angle)*7,4,Math.cos(angle)*7);item.cool=2;item.mesh.position.copy(item.pos);}
  refreshPile();v.y=4;v.x+=Math.sin(yaw)*4;v.z-=Math.cos(yaw)*4;message(removed.length?'Loose again. Your scrap is still out there.':'Magnetic burst.');
 }
-function areaWidth(x){return x<25?21:x<94?34:x<211?43:x<410?73:x<650?108:x<1020?140:x<1530?195:240;}
+function areaWidth(x){return x<25?21:x<94?34:x<211?43:x<410?73:x<650?108:x<1020?140:x<1530?195:x<2120?240:300;}
 const tmp=new T.Vector3();
 function support(proxies){let h=CORE;for(const c of proxies){const floor=terrain(p.x+c.center.x,p.z+c.center.z);if(floor<p.y+.35)h=Math.max(h,floor+c.r-c.center.y);}return h;}
 function motionProfile(){
@@ -136,7 +138,7 @@ function step(input){
 function panel(){
  $('overlay').hidden=state==='play';if(state==='play')return;
  const result=state==='result',paused=state==='paused';
- $('card').innerHTML='<div class="eyebrow">MAGNET / EIGHT DISTRICTS. ONE TINY CORE.</div><h1>'+(result?'That escalated<br>beautifully.':paused?'Hold that<br>thought.':'Small core.<br>Huge mess.')+'</h1><p>'+(result?'From the workbench to the launchpad. '+pile.parts.length+' objects, all built around the same little magnet.':paused?'Your pile is saved locally. Keep rolling whenever you’re ready.':'Make a lopsided rolling pile of real objects. Start in the workshop, spill into the yard, and take the city piece by piece.')+'</p><button id="go">'+(result?'Keep exploring':paused?'Keep rolling':'Start a new pile')+'</button>'+(!paused&&!result&&saveData?'<button id="continue">Continue saved pile</button>':'')+'<p class="fine">WASD roll · Space attract · F nudge · Shift shed<br>Eight milestones, no time pressure. Backspace gets you unstuck.</p>';
+ $('card').innerHTML='<div class="eyebrow">MAGNET / NINE DISTRICTS. ONE TINY CORE.</div><h1>'+(result?'That escalated<br>beautifully.':paused?'Hold that<br>thought.':'Small core.<br>Huge mess.')+'</h1><p>'+(result?'From the workbench to the titan foundry. '+pile.parts.length+' objects, all built around the same little magnet.':paused?'Your pile is saved locally. Keep rolling whenever you’re ready.':'Make a lopsided rolling pile of real objects. Start in the workshop, spill into the yard, and take the city piece by piece.')+'</p><button id="go">'+(result?'Keep exploring':paused?'Keep rolling':'Start a new pile')+'</button>'+(!paused&&!result&&saveData?'<button id="continue">Continue saved pile</button>':'')+'<p class="fine">WASD roll · Space attract · F nudge · Shift shed<br>Nine milestones, no time pressure. Backspace gets you unstuck.</p>';
  $('go').onclick=()=>{if(paused||result){state='play';keys.clear();panel();}else reset();};if($('continue'))$('continue').onclick=restore;
 }
 function pause(){if(state==='play'){state='paused';keys.clear();fieldLatched=false;save();panel();}else if(state==='paused'){state='play';keys.clear();panel();}}
@@ -149,7 +151,7 @@ function updateHUD(){
  $('collection').textContent=seen.size+' / '+Object.keys(defs).length+' kinds found';
  $('clearSave').textContent=autosaveEnabled?'Clear saved run':'Save current run';
  if(!$('catalog').hidden)$('catalog').innerHTML=Object.entries(defs).map(([kind,d])=>'<div class="'+(seen.has(kind)?'found':'missing')+'">'+(seen.has(kind)?'✓ ':power>=d.need?'○ ':'· ')+d.label+'</div>').join('');
- const map=$('map').getContext('2d');map.clearRect(0,0,260,92);map.fillStyle='#203e36';map.fillRect(0,0,260,92);const widths=[15,20,27,32,34,38,42,52],colors=['#bba76d','#9da86f','#849a9b','#aaa39b','#a7957d','#76a7b1','#9cabb5','#9d8fa5'];let x=0;for(let i=0;i<regions.length;i++){map.fillStyle=colors[i];map.globalAlpha=i<=stage?.65:.2;map.fillRect(x+2,15,widths[i]-4,58);x+=widths[i];}map.globalAlpha=1;map.fillStyle='#fbe7a9';map.font='8px Arial';map.fillText('WK YD ST  CITY RAIL DOCK AIR   ORBIT',3,10);const mapX=wx=>{const edges=[-25,25,94,211,410,650,1020,1530,WORLD_END];let i=0,offset=0;while(i<7&&wx>edges[i+1])offset+=widths[i++];return offset+T.MathUtils.clamp((wx-edges[i])/(edges[i+1]-edges[i]),0,1)*widths[i];};const mx=mapX(p.x),mz=44+p.z/245*30;map.beginPath();map.arc(mx,mz,3.4,0,Math.PI*2);map.fill();
+ const map=$('map').getContext('2d');map.clearRect(0,0,260,92);map.fillStyle='#203e36';map.fillRect(0,0,260,92);const colors=['#bba76d','#9da86f','#849a9b','#aaa39b','#a7957d','#76a7b1','#9cabb5','#9d8fa5','#8b7669'];let x=0;for(let i=0;i<regions.length;i++){map.fillStyle=colors[i];map.globalAlpha=i<=stage?.65:.2;map.fillRect(x+2,15,mapWidths[i]-4,58);x+=mapWidths[i];}map.globalAlpha=1;map.fillStyle='#fbe7a9';map.font='7px Arial';map.fillText('WK YD ST CITY RAIL DOCK AIR ORBIT FORGE',3,10);const mapX=wx=>{let i=0,offset=0;while(i<regions.length-1&&wx>mapEdges[i+1])offset+=mapWidths[i++];return offset+T.MathUtils.clamp((wx-mapEdges[i])/(mapEdges[i+1]-mapEdges[i]),0,1)*mapWidths[i];};const mx=mapX(p.x),mz=44+p.z/305*30;map.beginPath();map.arc(mx,mz,3.4,0,Math.PI*2);map.fill();
 }
 function render(delta){
  CrushWorkshop.update(delta);FieldNotes.update();
@@ -187,7 +189,7 @@ $('inspectModels').onclick=()=>{if(state==='play')pause();location.href='showroo
 $('travel').innerHTML+=[...regions].map((r,i)=>'<option value="'+i+'">'+r.name+'</option>').join('');$('travel').onchange=()=>{if($('travel').value!=='')travelTo(Number($('travel').value));$('travel').value='';$('travel').blur();};
 $('collection').onclick=()=>{$('catalog').hidden=!$('catalog').hidden;$('collection').blur();};
 const minimap=document.createElement('canvas');minimap.id='map';minimap.width=260;minimap.height=92;minimap.setAttribute('aria-label','District map: the dot is your pile.');document.body.appendChild(minimap);
-minimap.title='Click an unlocked district to travel with your pile';minimap.style.cursor='pointer';minimap.onclick=e=>{const rect=minimap.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width*260;let edge=0;for(const [i,width] of [15,20,27,32,34,38,42,52].entries()){edge+=width;if(x<edge){if(!travelTo(i))message('Collect the current milestone to open that district.');break;}}};
+minimap.title='Click an unlocked district to travel with your pile';minimap.style.cursor='pointer';minimap.onclick=e=>{const rect=minimap.getBoundingClientRect(),x=(e.clientX-rect.left)/rect.width*260;let edge=0;for(const [i,width] of mapWidths.entries()){edge+=width;if(x<edge){if(!travelTo(i))message('Collect the current milestone to open that district.');break;}}};
 $('optionsToggle').onclick=()=>{$('optionsPanel').hidden=!$('optionsPanel').hidden;$('optionsToggle').blur();};
 for(const name of ['reduced','autoHelp','fieldToggle','quality']){const el=$(name);if(name==='quality')el.value=settings[name];else el.checked=settings[name];el.onchange=()=>{settings[name]=name==='quality'?el.value:el.checked;fieldLatched=false;settingsChanged();el.blur();};}
 $('rescue').onclick=()=>{recover();$('rescue').blur();};
