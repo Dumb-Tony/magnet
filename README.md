@@ -4,9 +4,9 @@
 
 Build a lopsided rolling pile around a magnet that stays 64 cm across. The attached metal creates the larger shape—no growing center ball.
 
-Explore the workshop, salvage yard, street, city, railworks, dry docks, airfield, orbital launch complex and Titan Foundry. Nine milestones lead from a workbench to a locomotive, cargo freighter, airliner, rocket and blast furnace. Keep exploring afterward. 1,297 objects, 50 types, 38 crushed variants and nine optional Field notes objectives.
+Explore twelve connected districts from the workshop and salvage yard through the railworks, dry docks, airfield, orbital complex, Titan Foundry, Crown Quarry, Halcyon Hydro and the Apex megacity core. Twelve milestones escalate from a workbench to freighters, rockets, bucket-wheel excavators, hydro generators and a city spire. Keep exploring afterward. 1,770 objects, 62 types, 50 crushed variants and twelve optional Field notes objectives.
 
-[Inspect all 50 detailed objects](https://dumb-tony.github.io/magnet/showroom.html) · [Titan Foundry notes](docs/TITAN_FOUNDRY.md)
+[Inspect all 62 detailed objects](https://dumb-tony.github.io/magnet/showroom.html) · [Titan Foundry notes](docs/TITAN_FOUNDRY.md)
 
 A graphics pass adds materially distinct roads, masonry, wood, metal, glass, vehicle paint, landscaping, wind-swept grass, atmospheric sky and depth-aware shading. High and Low graphics settings are available. Large piles also gain cruising speed while retaining slightly heavier response. See the [environmental aesthetics pass](docs/AESTHETICS.md), [movement tuning](docs/MOVEMENT.md) and [graphics and airfield notes](docs/GRAPHICS_AND_AIRFIELD.md).
 
@@ -36,8 +36,8 @@ See [docs/DISTRICTS.md](docs/DISTRICTS.md) for current design/limitations and [d
 - `node tests/graphics-browser.cjs`: previous-save migration, original 790 IDs, High/Low rendering, resizing, shader errors and late-route model previews.
 - `node tests/movement-scaling-browser.cjs`: starting response, size-scaled cruising speed, camera pullback and late-game visible pace.
 - `node tests/foundry-browser.cjs`: original 1,116 IDs, save migration, ninth-district progression, new crushed forms and map geometry.
-- `node tests/detail-browser.cjs`: all 50 model bounds and geometry reuse, mesh batching, gallery controls, crushed previews and narrow viewport.
-- `node tests/adventure-browser.cjs`: complete nine-district route, immutable attachments, continued late-game play and frame sample. `DIGITAL=1` quantizes the replay to keyboard-style directions; `GAME_URL` targets deployment.
+- `node tests/detail-browser.cjs`: all 62 model bounds and geometry reuse, mesh batching, gallery controls, crushed previews and narrow viewport.
+- `node tests/adventure-browser.cjs`: complete twelve-district route, immutable attachments, continued late-game play and frame sample. `DIGITAL=1` quantizes the replay to keyboard-style directions; `GAME_URL` targets deployment.
 - `node tests/pile-density-browser.cjs`: deep seating for every sampled pickup, dense-pile silhouette and hidden-interior rendering cap.
 - `node tests/adventure-regression.cjs`: fixed core, shape contacts, rocking supports, saves, recovery, repulsion, 600 simulated stress seconds, repeatability, options and input checks.
 - `node tests/adventure-storage.cjs`: reload/continue with exact attachment poses, clear save, offline request check and storage-denied play.

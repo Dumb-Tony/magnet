@@ -10,6 +10,9 @@ const FieldNotes=(()=>{
   {name:'Working on the railroad',detail:'Collect 12 excavators or tank wagons.',kinds:['excavator','tankcar'],target:12},
   {name:'Harbor master',detail:'Collect 8 tugboats or dock cranes.',kinds:['tugboat','crane'],target:8},
   {name:'Feed the furnace',detail:'Collect 10 transformers, dozers or turbine generators.',kinds:['transformer','bulldozer','turbine'],target:10},
+  {name:'Move a mountain',detail:'Collect 12 haul trucks, drill rigs or rock crushers.',kinds:['haultruck','drillrig','rockcrusher'],target:12},
+  {name:'Harness the river',detail:'Collect 12 penstocks, spillway gates or dam cranes.',kinds:['penstock','spillgate','damcrane'],target:12},
+  {name:'Urban appetite',detail:'Collect 12 monorails, tower cranes or office towers.',kinds:['monorail','towercrane','officeblock'],target:12},
   {name:'One of everything',detail:'Discover every collectible type.',target:Object.keys(defs).length,unique:true}
  ];
  let found=new Set(),awarded=new Set(),dirty=true;

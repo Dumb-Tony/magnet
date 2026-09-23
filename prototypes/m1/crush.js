@@ -5,7 +5,8 @@ const CrushWorkshop=(()=>{
  Object.assign(profiles,{toolbox:[.6,.85,.08],vending:[.5,.8,.14],trafficlight:[.6,.85,.15],excavator:[.55,.8,.25],tankcar:[.55,.8,.22],locomotive:[.5,.8,.25],tugboat:[.55,.78,.3],crane:[.52,.8,.4],freighter:[.48,.8,.5]});
  Object.assign(profiles,{suitcase:[.6,.9,.07],baggagecart:[.6,.8,.12],fueltruck:[.5,.8,.2],propplane:[.5,.75,.25],controltower:[.5,.8,.25],airliner:[.48,.75,.5]});
  Object.assign(profiles,{satellite:[.48,.78,.2],rover:[.52,.8,.18],radar:[.45,.76,.22],launchtruck:[.46,.75,.3],rocket:[.42,.82,.45]});
- Object.assign(profiles,{transformer:[.48,.78,.22],bulldozer:[.5,.76,.28],turbine:[.46,.75,.35],ladle:[.5,.78,.28],blastfurnace:[.38,.8,.55]});
+Object.assign(profiles,{transformer:[.48,.78,.22],bulldozer:[.5,.76,.28],turbine:[.46,.75,.35],ladle:[.5,.78,.28],blastfurnace:[.38,.8,.55]});
+Object.assign(profiles,{haultruck:[.48,.78,.26],drillrig:[.45,.76,.3],rockcrusher:[.5,.74,.3],bucketwheel:[.38,.72,.5],penstock:[.48,.7,.4],spillgate:[.42,.82,.3],damcrane:[.35,.72,.48],hydrogenerator:[.4,.76,.5],monorail:[.46,.72,.26],towercrane:[.34,.7,.5],officeblock:[.38,.76,.5],megaspire:[.3,.72,.58]});
  const templates={},animating=new Set();
  function build(kind){
   if(templates[kind])return templates[kind].clone();
