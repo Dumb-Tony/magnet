@@ -14,3 +14,9 @@ Representative controlled samples:
 | Launch complex | 27.68 | 56.95 | 42% |
 
 The launch-sized sample previously retained about 23% of the bare core's screen pace. The new curve keeps about 42%, so late travel still feels heavier while moving nearly twice as strongly on screen. These are deterministic unobstructed browser samples, not human feel-test results.
+
+## 24 September 2026 — Captured mouse camera
+
+Starting, continuing, resuming or clicking the world now requests Pointer Lock. Relative mouse movement continuously orbits and tilts the follow camera, and WASD remains camera-relative, so players can scan behind the pile and revisit missed objects without holding a mouse button or reaching a screen edge. Escape releases capture without pausing; a second Escape pauses. Q/E orbit remains available, and drag-to-look is retained as a fallback when Pointer Lock is unavailable or denied. Vertical tilt is clamped to keep the world upright.
+
+The dedicated browser check verifies capture, horizontal and vertical relative movement, body lock state, release without pausing and ordinary pause afterward. The 600-second movement/physics regression also passed unchanged.

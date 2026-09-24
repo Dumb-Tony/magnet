@@ -16,10 +16,10 @@ The overhauled renderer adds 512-pixel procedural PBR surfaces, 4K soft shadows,
 
 - WASD / arrows: roll relative to the camera.
 - Space: attraction (hold or toggle in Options).
-- Q / E or drag: orbit the camera.
+- Click the game to capture the mouse; move it to look freely around the pile. Escape releases it. Q / E remain camera-orbit keys.
 - F: nudge without shedding. Shift: shed recent pieces and burst.
 - Backspace: recover the intact pile in an open area.
-- Escape: pause and save. R: restart. Enter: start/resume.
+- Escape releases the captured mouse; press it again to pause and save. R restarts and Enter starts or resumes.
 
 Click Field notes for optional discovery goals, or the collection count for the checklist. Click an unlocked district on the map (or Options → Travel) to return with your entire pile. The map shows your pile and next milestone. Options include reduced motion, low graphics, automatic unsticking and save controls. Runs autosave locally; Continue saved pile appears after reloading.
 

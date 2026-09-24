@@ -141,13 +141,14 @@ function step(input){
  if(saveTimer>20){save();saveTimer=0;}
  physicsMs=performance.now()-begin;
 }
+function lockMouse(){if(state==='play'&&document.pointerLockElement!==$('world')&&$('world').requestPointerLock)$('world').requestPointerLock().catch(()=>{});}
 function panel(){
  $('overlay').hidden=state==='play';if(state==='play')return;
  const result=state==='result',paused=state==='paused';
  $('card').innerHTML='<div class="eyebrow">MAGNET / FIFTEEN DISTRICTS. ONE TINY CORE.</div><h1>'+(result?'That escalated<br>beautifully.':paused?'Hold that<br>thought.':'Small core.<br>Huge mess.')+'</h1><p>'+(result?'From the workbench to the machine that moves the world. '+pile.parts.length+' objects, all built around the same little magnet.':paused?'Your pile is saved locally. Keep rolling whenever you’re ready.':'Make a lopsided rolling pile of real objects. Start in the workshop, spill into the yard, and take the city piece by piece.')+'</p><button id="go">'+(result?'Keep exploring':paused?'Keep rolling':'Start a new pile')+'</button>'+(!paused&&!result&&saveData?'<button id="continue">Continue saved pile</button>':'')+'<p class="fine">WASD roll · Space attract · F nudge · Shift shed<br>Fifteen milestones, no time pressure. Backspace gets you unstuck.</p>';
- $('go').onclick=()=>{if(paused||result){state='play';keys.clear();panel();}else reset();};if($('continue'))$('continue').onclick=restore;
+ $('go').onclick=()=>{if(paused||result){state='play';keys.clear();panel();}else reset();lockMouse();};if($('continue'))$('continue').onclick=()=>{restore();lockMouse();};
 }
-function pause(){if(state==='play'){state='paused';keys.clear();fieldLatched=false;save();panel();}else if(state==='paused'){state='play';keys.clear();panel();}}
+function pause(){if(state==='play'){state='paused';keys.clear();fieldLatched=false;if(document.pointerLockElement)document.exitPointerLock();save();panel();}else if(state==='paused'){state='play';keys.clear();panel();lockMouse();}}
 function updateHUD(){
  if($('travel')){for(const o of $('travel').options)if(o.value!=='')o.disabled=Number(o.value)>stage;}
  $('size').firstChild.textContent=(pile.extent*2<1?(pile.extent*200).toFixed(0)+' cm':(pile.extent*2).toFixed(1)+' m')+' pile';$('phase').textContent=(stage+1)+'/'+regions.length+' · '+regions[stage].name;
@@ -182,12 +183,13 @@ document.addEventListener('keydown',e=>{
  if(e.target.matches('input,select,button')&&!['Escape','KeyR'].includes(e.code))return;
  if(['Space','Backspace','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.code))e.preventDefault();if(e.repeat)return;
  if(e.code==='Enter'&&state!=='play'){state==='start'?reset():(state='play',panel());return;}
- if(e.code==='Escape'){pause();return;}if(e.code==='KeyR'){reset();return;}if(e.code==='KeyF'){nudge();return;}if(e.code==='Backspace'){recover();return;}
+ if(e.code==='Escape'){if(document.pointerLockElement)return;pause();return;}if(e.code==='KeyR'){reset();return;}if(e.code==='KeyF'){nudge();return;}if(e.code==='Backspace'){recover();return;}
  if(e.code.startsWith('Shift')){repel();return;}if(e.code==='F3'){e.preventDefault();$('debug').style.display=$('debug').style.display==='block'?'none':'block';return;}
  if(e.code==='Space'&&settings.fieldToggle)fieldLatched=!fieldLatched;keys.add(e.code);
 });document.addEventListener('keyup',e=>keys.delete(e.code));
 window.addEventListener('blur',()=>{if(state==='play')pause();keys.clear();fieldLatched=false;});document.addEventListener('visibilitychange',()=>{if(document.hidden&&state==='play')pause();});window.addEventListener('resize',resize);
-let drag=false;$('world').addEventListener('pointerdown',e=>{drag=true;$('world').setPointerCapture(e.pointerId);});$('world').addEventListener('pointerup',()=>drag=false);$('world').addEventListener('pointermove',e=>{if(drag){yaw-=e.movementX*.005;pitch=T.MathUtils.clamp(pitch+e.movementY*.004*(settings.invert?-1:1),.3,1.25);}});
+let drag=false;function look(e){yaw-=e.movementX*.0032;pitch=T.MathUtils.clamp(pitch+e.movementY*.0028*(settings.invert?-1:1),.22,1.32);}
+$('world').addEventListener('pointerdown',e=>{if(state!=='play')return;if($('world').requestPointerLock){lockMouse();return;}drag=true;$('world').setPointerCapture(e.pointerId);});$('world').addEventListener('pointerup',()=>drag=false);$('world').addEventListener('pointermove',e=>{if(drag)look(e);});document.addEventListener('mousemove',e=>{if(document.pointerLockElement===$('world'))look(e);});document.addEventListener('pointerlockchange',()=>{document.body.classList.toggle('mouseLocked',document.pointerLockElement===$('world'));});
 $('pause').onclick=()=>{pause();$('pause').blur();};$('restart').onclick=()=>{reset();$('restart').blur();};$('sound').onclick=()=>{settings.sound=!settings.sound;settingsChanged();$('sound').blur();};
 function settingsChanged(){try{localStorage.setItem(OPTIONS,JSON.stringify(settings));}catch{storageOK=false;}$('sound').textContent=settings.sound?'Sound on':'Sound off';resize();}
 const extra=document.createElement('div');extra.id='options';extra.innerHTML='<button id="collection"></button> <button id="optionsToggle">Options</button><button id="inspectModels">Object gallery</button><div id="catalog" hidden></div><div id="optionsPanel" hidden><label><input id="reduced" type="checkbox"> Reduced motion</label><label><input id="autoHelp" type="checkbox"> Gentle unsticking</label><label><input id="fieldToggle" type="checkbox"> Toggle attraction</label><label>Graphics <select id="quality"><option value="high">High</option><option value="low">Low</option></select></label><label>Travel <select id="travel"><option value="">Choose an unlocked district</option></select></label><button id="rescue">Recover pile</button><button id="clearSave">Clear saved run</button></div>';document.body.appendChild(extra);

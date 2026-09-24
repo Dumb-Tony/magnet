@@ -1,0 +1,8 @@
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright'),path=require('path'),assert=require('assert');
+(async()=>{
+ const browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_PATH||'C:/Program Files/Google/Chrome/Application/chrome.exe'}),page=await browser.newPage({viewport:{width:1200,height:800}}),errors=[];page.on('pageerror',e=>errors.push(e.message));
+ await page.goto('file:///'+path.resolve(__dirname,'../prototypes/m1/index.html').replaceAll('\\','/'));await page.waitForFunction(()=>window.Magnet3D);await page.click('#go');await page.waitForFunction(()=>document.pointerLockElement===document.getElementById('world'));
+ const before=await page.evaluate(()=>({yaw,pitch,state,locked:!!document.pointerLockElement}));await page.mouse.move(600,400);await page.mouse.move(790,310,{steps:6});await page.waitForTimeout(80);const after=await page.evaluate(()=>({yaw,pitch,state,locked:document.pointerLockElement===world,css:document.body.classList.contains('mouseLocked')}));
+ assert(after.locked);assert(after.css);assert.notEqual(after.yaw,before.yaw);assert.notEqual(after.pitch,before.pitch);assert.equal(after.state,'play');await page.evaluate(()=>document.exitPointerLock());await page.waitForFunction(()=>!document.pointerLockElement);assert.equal(await page.evaluate(()=>state),'play');await page.click('#pause');assert.equal(await page.evaluate(()=>state),'paused');assert.deepEqual(errors,[]);
+ console.log(JSON.stringify({before,after,releasedWithoutPause:true,errors},null,2));await browser.close();
+})().catch(e=>{console.error(e);process.exit(1)});
