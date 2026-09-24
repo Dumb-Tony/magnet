@@ -7,6 +7,7 @@ const CrushWorkshop=(()=>{
  Object.assign(profiles,{satellite:[.48,.78,.2],rover:[.52,.8,.18],radar:[.45,.76,.22],launchtruck:[.46,.75,.3],rocket:[.42,.82,.45]});
 Object.assign(profiles,{transformer:[.48,.78,.22],bulldozer:[.5,.76,.28],turbine:[.46,.75,.35],ladle:[.5,.78,.28],blastfurnace:[.38,.8,.55]});
 Object.assign(profiles,{haultruck:[.48,.78,.26],drillrig:[.45,.76,.3],rockcrusher:[.5,.74,.3],bucketwheel:[.38,.72,.5],penstock:[.48,.7,.4],spillgate:[.42,.82,.3],damcrane:[.35,.72,.48],hydrogenerator:[.4,.76,.5],monorail:[.46,.72,.26],towercrane:[.34,.7,.5],officeblock:[.38,.76,.5],megaspire:[.3,.72,.58]});
+Object.assign(profiles,{crawlerdock:[.4,.72,.42],oilrig:[.32,.7,.5],suspensionbridge:[.3,.68,.55],supercarrier:[.34,.72,.46],maglevcar:[.42,.7,.32],solararray:[.3,.62,.5],orbithabitat:[.38,.7,.48],orbitalring:[.3,.66,.58],arcology:[.3,.7,.56],fusioncore:[.38,.72,.5],skyhook:[.25,.68,.62],worldengine:[.28,.68,.6]});
  const templates={},animating=new Set();
  function build(kind){
   if(templates[kind])return templates[kind].clone();

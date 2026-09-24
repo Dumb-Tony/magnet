@@ -13,6 +13,9 @@ const FieldNotes=(()=>{
   {name:'Move a mountain',detail:'Collect 12 haul trucks, drill rigs or rock crushers.',kinds:['haultruck','drillrig','rockcrusher'],target:12},
   {name:'Harness the river',detail:'Collect 12 penstocks, spillway gates or dam cranes.',kinds:['penstock','spillgate','damcrane'],target:12},
   {name:'Urban appetite',detail:'Collect 12 monorails, tower cranes or office towers.',kinds:['monorail','towercrane','officeblock'],target:12},
+  {name:'Eat the coastline',detail:'Collect 12 shipyard crawlers, oil rigs or bridges.',kinds:['crawlerdock','oilrig','suspensionbridge'],target:12},
+  {name:'Orbit is local',detail:'Collect 12 maglevs, solar wings or habitats.',kinds:['maglevcar','solararray','orbithabitat'],target:12},
+  {name:'Impossible engineering',detail:'Collect 12 arcologies, fusion cores or skyhooks.',kinds:['arcology','fusioncore','skyhook'],target:12},
   {name:'One of everything',detail:'Discover every collectible type.',target:Object.keys(defs).length,unique:true}
  ];
  let found=new Set(),awarded=new Set(),dirty=true;

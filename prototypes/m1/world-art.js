@@ -7,15 +7,15 @@ const WorldArt=(()=>{
  // A continuous landscape prevents the world from looking like floating cardboard slabs.
  const grassCanvas=document.createElement('canvas');grassCanvas.width=grassCanvas.height=512;const gx=grassCanvas.getContext('2d');gx.fillStyle='#819563';gx.fillRect(0,0,512,512);let seed=1831;const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
  for(let i=0;i<15000;i++){gx.fillStyle=i%3?'rgba(42,68,29,.16)':'rgba(222,214,137,.2)';gx.fillRect(rnd()*512,rnd()*512,1,rnd()*4+1);}const grassMap=new T.CanvasTexture(grassCanvas);grassMap.colorSpace=T.SRGBColorSpace;grassMap.wrapS=grassMap.wrapT=T.RepeatWrapping;grassMap.repeat.set(160,100);
- const landscape=new T.Mesh(new T.PlaneGeometry(7000,2600),new T.MeshStandardMaterial({map:grassMap,color:'#b4c598',roughness:1}));landscape.rotation.x=-Math.PI/2;landscape.position.set(2200,-.5,0);landscape.receiveShadow=true;scene.add(landscape);
+ const landscape=new T.Mesh(new T.PlaneGeometry(10500,3200),new T.MeshStandardMaterial({map:grassMap,color:'#b4c598',roughness:1}));landscape.rotation.x=-Math.PI/2;landscape.position.set(3700,-.5,0);landscape.receiveShadow=true;scene.add(landscape);
  // Individual blades catch light along the verges while one instanced draw keeps them inexpensive.
  const bladeGeo=new T.BufferGeometry();bladeGeo.setAttribute('position',new T.Float32BufferAttribute([-.055,0,0,.055,0,0,0,.7,0,0,0,-.055,0,0,.055,0,.7,0],3));bladeGeo.computeVertexNormals();
  const grassTime={value:0},grassMaterial=new T.MeshStandardMaterial({color:'#6f8f4d',roughness:1,side:T.DoubleSide,vertexColors:true});
  grassMaterial.onBeforeCompile=shader=>{shader.uniforms.grassTime=grassTime;shader.vertexShader='uniform float grassTime;\n'+shader.vertexShader.replace('#include <begin_vertex>','#include <begin_vertex>\nfloat bladeBend=position.y*position.y*.075;\ntransformed.x+=sin(grassTime*1.7+instanceMatrix[3].x*.08+instanceMatrix[3].z*.04)*bladeBend;\ntransformed.z+=cos(grassTime*1.35+instanceMatrix[3].z*.07)*bladeBend*.55;');};
  grassMaterial.customProgramCacheKey=()=> 'wind-swept-grass-v1';
- const grassBlades=new T.InstancedMesh(bladeGeo,grassMaterial,4200),dummy=new T.Object3D();
- const verge=x=>x<25?25:x<94?39:x<211?51:x<410?84:x<650?119:x<1020?165:x<1530?208:x<2120?252:x<2820?312:x<3550?360:x<4300?410:460;
- for(let i=0;i<4200;i++){const x=-70+rnd()*5350,z=(rnd()>.5?1:-1)*(verge(x)+rnd()*70);dummy.position.set(x,-.48,z);dummy.rotation.set(0,rnd()*Math.PI,.12*(rnd()-.5));const s=.55+rnd()*.9;dummy.scale.set(s,s,s);dummy.updateMatrix();grassBlades.setMatrixAt(i,dummy.matrix);grassBlades.setColorAt(i,new T.Color(i%3?'#789a55':'#a0ad5f'));}grassBlades.receiveShadow=true;scene.add(grassBlades);
+ const grassBlades=new T.InstancedMesh(bladeGeo,grassMaterial,5800),dummy=new T.Object3D();
+ const verge=x=>x<25?25:x<94?39:x<211?51:x<410?84:x<650?119:x<1020?165:x<1530?208:x<2120?252:x<2820?312:x<3550?360:x<4300?410:x<5200?460:x<6280?530:x<7420?590:660;
+ for(let i=0;i<5800;i++){const x=-70+rnd()*8550,z=(rnd()>.5?1:-1)*(verge(x)+rnd()*70);dummy.position.set(x,-.48,z);dummy.rotation.set(0,rnd()*Math.PI,.12*(rnd()-.5));const s=.55+rnd()*.9;dummy.scale.set(s,s,s);dummy.updateMatrix();grassBlades.setMatrixAt(i,dummy.matrix);grassBlades.setColorAt(i,new T.Color(i%3?'#789a55':'#a0ad5f'));}grassBlades.receiveShadow=true;scene.add(grassBlades);
  // Workshop: structural beams, wall panels, ceiling lamps and constructed storage fixtures.
  for(let x=-24;x<25;x+=6){b('#435f61',x,3.2,-21.62,.14,6.4,.18,.5);b('#c0c4b5',x,1.1,-21.58,5.8,2.2,.08);}
  for(let x of [-18,-6,6,18]){b('#485c60',x,6.3,-7,.16,.2,29,.5);b('#efdbad',x,5.95,-5,2.8,.08,.5);b('#425b5b',x,6.05,-5,3,.12,.7,.6);}
@@ -58,7 +58,7 @@ const WorldArt=(()=>{
  for(let x=1035;x<1520;x+=15)for(let z of [-32,32]){c('#394f54',x,.16,z,.14,.32);b('#ffe4a1',x,.34,z,.3,.055,.3);}
  for(let x=1050;x<1510;x+=48)for(let z of [-95,95]){b('#e1bf68',x,.04,z,27,.025,.18);b('#e1bf68',x-13.5,.04,z,.18,.025,33);}
  // Layered hills, tree lines and a distant city keep every camera direction grounded.
- for(const side of [-1,1])for(let i=0;i<80;i++){const m=mesh(new T.SphereGeometry(1,18,11),i%3?'#8ba596':'#718e82',[-120+i*70,-38,side*(520+rnd()*180)],[100+rnd()*105,68+rnd()*70,105+rnd()*85],decor);m.rotation.y=rnd()*6;}
+ for(const side of [-1,1])for(let i=0;i<125;i++){const m=mesh(new T.SphereGeometry(1,18,11),i%3?'#8ba596':'#718e82',[-120+i*70,-38,side*(520+rnd()*180)],[100+rnd()*105,68+rnd()*70,105+rnd()*85],decor);m.rotation.y=rnd()*6;}
  for(let x=120;x<520;x+=22)for(const side of [-1,1]){const h=28+rnd()*60;b(x%44?'#728482':'#647777',x,h/2,side*(245+rnd()*35),14+rnd()*12,h,18);for(let y=8;y<h-5;y+=9)b('#86a9ac',x,y,side*(235+rnd()*2),7,3,.08);}
  for(let x=430;x<960;x+=42)for(const side of [-1,1]){c('#6b5745',x,3,side*(205+rnd()*22),.35,6);mesh(leafGeo,x%84?'#58754b':'#6d864e',[x,8,side*(205+rnd()*22)],[5+rnd()*3,7+rnd()*4,5+rnd()*3],decor);}
  const packedEnvironment=DetailedModels.batch(environment);environment.visible=false;scene.add(packedEnvironment);
@@ -72,7 +72,7 @@ const WorldArt=(()=>{
  const sky=new T.Mesh(new T.SphereGeometry(2350,24,16),skyMat);sky.frustumCulled=false;sky.renderOrder=-100;scene.add(sky);
  scene.background=new T.Color('#b7ccd0');scene.fog.color.set('#b7ccd0');scene.children.filter(o=>o.isHemisphereLight).forEach(o=>{o.color.set('#d9edf2');o.groundColor.set('#625447');o.intensity=1.32;});sun.color.set('#ffd39a');sun.intensity=3.45;sun.shadow.radius=3;sun.shadow.blurSamples=8;const fill=new T.DirectionalLight('#8ebbd0',.72);fill.position.set(24,18,-32);scene.add(fill);renderer.toneMappingExposure=1.06;
  environment.traverse(m=>{if(m.isMesh&&m.material.map&&m.material.color.getHexString()==='397a89')water.push(m.material.map);});
- return {update(dt,reduced){if(!reduced)clock+=dt;sky.position.copy(camera.position);skyMat.uniforms.time.value=clock;grassTime.value=clock;for(const map of water)map.offset.x=clock*.004;},stats:{components:packed.userData.rawParts+packedEnvironment.userData.rawParts,batches:packed.children.length+packedEnvironment.children.length,grassBlades:4200}};
+ return {update(dt,reduced){if(!reduced)clock+=dt;sky.position.copy(camera.position);skyMat.uniforms.time.value=clock;grassTime.value=clock;for(const map of water)map.offset.x=clock*.004;},stats:{components:packed.userData.rawParts+packedEnvironment.userData.rawParts,batches:packed.children.length+packedEnvironment.children.length,grassBlades:5800}};
 })();
 
 const GraphicsPass=(()=>{

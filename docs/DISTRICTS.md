@@ -4,7 +4,7 @@ The user asked for a fixed magnet core, a physical lopsided pile that remains na
 
 ## What is playable
 
-One continuous twelve-district course, 1,770 collectible objects and 62 object types. The route continues through Meridian Airfield, the orbital launch complex and Titan Foundry into Crown Quarry, Halcyon Hydro and the Apex megacity core. The 64 cm core never changes size. There is no growing filler sphere. Eligible objects crumple on pickup and seat deeply into the compound pile. See [the visual and crushing pass](CRUSHING.md).
+One continuous fifteen-district course, 2,157 collectible objects and 74 object types. The route continues through Meridian Airfield, the orbital launch complex and Titan Foundry into Crown Quarry, Halcyon Hydro, Apex Core, Leviathan Coast, the Orbital Ringworks and the World Engine. The 64 cm core never changes size. There is no growing filler sphere. Eligible objects crumple on pickup and seat deeply into the compound pile. See [the visual and crushing pass](CRUSHING.md).
 
 1. Workshop: tabletop scraps, a ramp, shelves, a narrow optional aisle, long pipes, stools and lockers. Collect the workbench to open the yard.
 2. Salvage yard: barrels, handcarts, bicycles and skips. The forklift opens the street.
@@ -15,6 +15,9 @@ One continuous twelve-district course, 1,770 collectible objects and 62 object t
 7. Crown Quarry: ultra haul trucks, blast-hole drills and mobile rock crushers build toward a bucket-wheel excavator among rock terraces and conveyors.
 8. Halcyon Hydro: penstocks, spillway gates and dam gantries build toward a hydro generator beside a broad reservoir and monumental dam.
 9. Apex Core: monorails, tower cranes and office towers build toward the megacity spire along a wide avenue beneath elevated transit.
+10. Leviathan Coast: shipyard crawlers, offshore rigs and suspension bridges build toward a supercarrier.
+11. Orbital Ringworks: maglevs, solar wings and habitats build toward a complete orbital ring segment.
+12. The World Engine: arcologies, fusion reactors and skyhooks build toward the impossible final machine.
 
 Each later district has an off-route rebuild corner with ascending small-to-medium salvage. No countdown, failure timer, delivery bay, currency, upgrades or multiplayer. This is a compact city district, not an entire destructible city.
 
@@ -47,7 +50,7 @@ The current version saves locally every 20 simulation seconds, on milestones and
 
 Open `prototypes/m1/index.html` with adjacent `pile.js`, `materials-v2.js`, `world.js`, `crush.js`, `adventure.js` and `vendor/` intact. Locally bundled Three.js 0.160.1 and its MIT license remain unchanged. No external requests or build step. The previous 3D experiment is `growth-first.html`; the original 2D game is `delivery-2d.html`. Tests for those older versions remain separate.
 
-The course lives in `world.js`, `expansion.js`, `airfield.js`, `launch-complex.js`, `titan-foundry.js` and `beyond-foundry.js`, world scenery and the graphics finishing pass in `world-art.js`, detailed collectible models in `detail-models.js`, surface maps in `materials-v2.js`, reflected lighting in `lighting.js`, crushing in `crush.js`, attachment packing in `pile.js`, and progression/input/save/UI in `adventure.js`. Keep all adjacent scripts for offline use. `showroom.html` provides a close-up interactive gallery. See [the object art pass](OBJECT_ART.md). Milestone definitions remain centralized in the `regions` array and goal flags.
+The course lives in `world.js`, `expansion.js`, `airfield.js`, `launch-complex.js`, `titan-foundry.js`, `beyond-foundry.js` and `insanity.js`, world scenery and the graphics finishing pass in `world-art.js`, detailed collectible models in `detail-models.js`, surface maps in `materials-v2.js`, reflected lighting in `lighting.js`, crushing in `crush.js`, attachment packing in `pile.js`, and progression/input/save/UI in `adventure.js`. Keep all adjacent scripts for offline use. `showroom.html` provides a close-up interactive gallery. See [the object art pass](OBJECT_ART.md). Milestone definitions remain centralized in the `regions` array and goal flags.
 
 ## Limits and next human gate
 

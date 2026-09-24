@@ -13,7 +13,7 @@ const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright'),path=requi
   const result=Magnet3D.snapshot();p.set(2470,.35,0);yaw=Math.PI/2;pitch=.3;Magnet3D.draw(0);state='paused';
   return{old:old.length,migration,regions:regions.length,mapWidth:mapWidths.reduce((a,b)=>a+b,0),foundry:foundry.length,kinds,reachable,powerBeforeGoal,goal:goal.kind,result,crushed,notes:FieldNotes.snapshot()};
  });
- assert.equal(report.migration.stage,8);assert.equal(report.migration.total,1770);assert.equal(report.regions,12);assert.equal(report.mapWidth,260);assert.equal(report.foundry,181);assert.equal(report.goal,'blastfurnace');assert(report.reachable);assert.equal(report.result.state,'play');assert.equal(report.result.stage,9);assert.equal(report.result.coreRadius,.32);assert.equal(report.notes.contracts.length,12);
+ assert.equal(report.migration.stage,8);assert.equal(report.migration.total,2157);assert.equal(report.regions,15);assert.equal(report.mapWidth,260);assert.equal(report.foundry,181);assert.equal(report.goal,'blastfurnace');assert(report.reachable);assert.equal(report.result.state,'play');assert.equal(report.result.stage,9);assert.equal(report.result.coreRadius,.32);assert.equal(report.notes.contracts.length,15);
  for(const kind of ['transformer','bulldozer','turbine','ladle','blastfurnace'])assert(report.kinds.includes(kind));
  for(const model of report.crushed){assert(model.height<.85,model.kind+' height');assert(model.volume<1,model.kind+' volume');}
  await page.screenshot({path:'test-results/foundry-district.png'});assert.deepEqual(errors,[]);console.log(JSON.stringify({...report,errors},null,2));await browser.close();
