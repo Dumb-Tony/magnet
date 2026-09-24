@@ -20,3 +20,9 @@ Ordinary pickups no longer create text notices. The brief core flash and optiona
 ![Clear-coated vehicle paint](images/material-car.png)
 
 The geometry remains stylized and procedural. Brick edge wear is represented through bump relief rather than individually displaced bricks, and grass blades do not have collision. High graphics uses the depth-aware finishing pass and full shadows; Low graphics remains the fallback for slower hardware.
+
+## 24 September 2026 — Cinematic renderer overhaul
+
+High mode now uses 512-pixel procedural color, relief and roughness maps with finer scratches, dust and pinholes; stronger clear-coated paint, metal and glass response; 4K soft sun shadows; cool rim and warm bounce lights; and a new depth-aware finishing pass. The pass reconstructs view-space normals, traces short screen-space reflection rays, adds two-scale ambient occlusion and contact shading, thresholds highlights into bloom, applies distance haze, vignette and filmic color grading. These are real-time screen-space techniques rather than hardware path tracing, which this offline WebGL build does not expose. Low mode bypasses the post pass, uses direct rendering and disables shadows.
+
+The complete fifteen-zone replay reached the World Engine with no page errors. With roughly 1,500 attached objects, the 120-frame High-mode sample averaged 16.96 ms and peaked at 25.2 ms at 1440 × 900 in local headless Chrome. The graphics regression verified nonblank output, shader compilation, High/Low switching, resizing, all late districts and object-gallery previews.

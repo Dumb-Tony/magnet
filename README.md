@@ -8,7 +8,7 @@ Explore fifteen connected districts from the workshop through cities, shipyards 
 
 [Inspect all 74 detailed objects](https://dumb-tony.github.io/magnet/showroom.html) · [Titan Foundry notes](docs/TITAN_FOUNDRY.md)
 
-A graphics pass adds materially distinct roads, masonry, wood, metal, glass, vehicle paint, landscaping, wind-swept grass, atmospheric sky and depth-aware shading. High and Low graphics settings are available. Large piles also gain cruising speed while retaining slightly heavier response. See the [environmental aesthetics pass](docs/AESTHETICS.md), [movement tuning](docs/MOVEMENT.md) and [graphics and airfield notes](docs/GRAPHICS_AND_AIRFIELD.md).
+The overhauled renderer adds 512-pixel procedural PBR surfaces, 4K soft shadows, multi-scale contact shading, depth-reconstructed normals, screen-space reflection rays, highlight bloom, distance haze, filmic grading, distinct roads, masonry, wood, metal, glass, vehicle paint, landscaping and wind-swept grass. High and Low graphics settings are available. Large piles also gain cruising speed while retaining slightly heavier response. See the [environmental aesthetics pass](docs/AESTHETICS.md), [movement tuning](docs/MOVEMENT.md) and [graphics and airfield notes](docs/GRAPHICS_AND_AIRFIELD.md).
 
 ![Detailed workshop objects](docs/images/detail-workshop.png)
 

@@ -70,7 +70,7 @@ const WorldArt=(()=>{
  void main(){vec3 d=normalize(vDir);float h=max(d.y,0.);vec3 color=mix(vec3(.61,.76,.83),vec3(.12,.36,.59),pow(h,.58));vec2 uv=d.xz/max(.15,d.y)*2.+vec2(time*.006,0);float cloud=noise(uv)*.55+noise(uv*2.)*.3+noise(uv*4.)*.15;float mask=smoothstep(.52,.72,cloud)*smoothstep(.015,.12,d.y);color=mix(color,vec3(.94,.94,.85),mask*.72);float sun=pow(max(dot(d,normalize(vec3(-.45,.8,.34))),0.),180.);color+=vec3(.55,.34,.12)*sun;gl_FragColor=vec4(color,1.);}
  `});
  const sky=new T.Mesh(new T.SphereGeometry(2350,24,16),skyMat);sky.frustumCulled=false;sky.renderOrder=-100;scene.add(sky);
- scene.background=new T.Color('#b7ccd0');scene.fog.color.set('#b7ccd0');scene.children.filter(o=>o.isHemisphereLight).forEach(o=>{o.color.set('#d9edf2');o.groundColor.set('#625447');o.intensity=1.32;});sun.color.set('#ffd39a');sun.intensity=3.45;sun.shadow.radius=3;sun.shadow.blurSamples=8;const fill=new T.DirectionalLight('#8ebbd0',.72);fill.position.set(24,18,-32);scene.add(fill);renderer.toneMappingExposure=1.06;
+ scene.background=new T.Color('#b7ccd0');scene.fog.color.set('#b7ccd0');scene.children.filter(o=>o.isHemisphereLight).forEach(o=>{o.color.set('#d9edf2');o.groundColor.set('#4c4038');o.intensity=1.24;});sun.color.set('#ffd39a');sun.intensity=3.75;sun.shadow.radius=2;sun.shadow.blurSamples=16;const fill=new T.DirectionalLight('#8ebbd0',.84);fill.position.set(24,18,-32);scene.add(fill);renderer.toneMappingExposure=1.08;
  environment.traverse(m=>{if(m.isMesh&&m.material.map&&m.material.color.getHexString()==='397a89')water.push(m.material.map);});
  return {update(dt,reduced){if(!reduced)clock+=dt;sky.position.copy(camera.position);skyMat.uniforms.time.value=clock;grassTime.value=clock;for(const map of water)map.offset.x=clock*.004;},stats:{components:packed.userData.rawParts+packedEnvironment.userData.rawParts,batches:packed.children.length+packedEnvironment.children.length,grassBlades:5800}};
 })();
@@ -78,12 +78,27 @@ const WorldArt=(()=>{
 const GraphicsPass=(()=>{
  const supported=renderer.capabilities.isWebGL2&&renderer.extensions.has('EXT_color_buffer_float');
  const target=new T.WebGLRenderTarget(1,1,{type:T.HalfFloatType,depthBuffer:true});target.depthTexture=new T.DepthTexture(1,1,T.UnsignedIntType);target.samples=supported?4:0;
- const uniforms={colorTex:{value:target.texture},depthTex:{value:target.depthTexture},resolution:{value:new T.Vector2(1,1)},nearPlane:{value:.05},farPlane:{value:2800},exposure:{value:1.02}};
+ const uniforms={colorTex:{value:target.texture},depthTex:{value:target.depthTexture},resolution:{value:new T.Vector2(1,1)},nearPlane:{value:.05},farPlane:{value:2800},exposure:{value:1.06},projection:{value:new T.Matrix4()},projectionInverse:{value:new T.Matrix4()}};
  const material=new T.ShaderMaterial({uniforms,depthTest:false,depthWrite:false,toneMapped:false,vertexShader:'varying vec2 vUv;void main(){vUv=uv;gl_Position=vec4(position.xy,0.,1.);}',fragmentShader:`
- varying vec2 vUv;uniform sampler2D colorTex,depthTex;uniform vec2 resolution;uniform float nearPlane,farPlane,exposure;
+ varying vec2 vUv;uniform sampler2D colorTex,depthTex;uniform vec2 resolution;uniform float nearPlane,farPlane,exposure;uniform mat4 projection,projectionInverse;
  float viewDepth(vec2 uv){float z=texture2D(depthTex,uv).x;return nearPlane*farPlane/(farPlane-z*(farPlane-nearPlane));}
+ vec3 viewPosition(vec2 uv){float z=texture2D(depthTex,uv).x;vec4 p=projectionInverse*vec4(uv*2.-1.,z*2.-1.,1.);return p.xyz/p.w;}
+ vec2 projectView(vec3 p){vec4 q=projection*vec4(p,1.);return q.xy/q.w*.5+.5;}
  vec3 aces(vec3 x){return clamp((x*(2.51*x+.03))/(x*(2.43*x+.59)+.14),0.,1.);}
- void main(){vec3 color=texture2D(colorTex,vUv).rgb;float d=viewDepth(vUv),ao=0.;float radius=clamp(180./max(d,1.),2.,12.);for(int i=0;i<8;i++){float a=float(i)*.785398;vec2 offset=vec2(cos(a),sin(a))*radius/resolution;float other=viewDepth(clamp(vUv+offset,.001,.999));float delta=d-other;ao+=smoothstep(.015,.18,delta)*(1.-smoothstep(.25,2.,delta));}color*=1.-ao*.032;vec2 q=vUv-.5;color*=1.-dot(q,q)*.13;color=aces(color*exposure);color=pow(color,vec3(1./2.2));gl_FragColor=vec4(color,1.);}
+ void main(){
+  vec3 color=texture2D(colorTex,vUv).rgb;float d=viewDepth(vUv),ao=0.;
+  // Multi-scale depth AO and contact shading.
+  for(int ring=0;ring<2;ring++){float radius=clamp((ring==0?150.:430.)/max(d,1.),2.,22.);for(int i=0;i<8;i++){float a=float(i)*.785398+float(ring)*.392699;vec2 off=vec2(cos(a),sin(a))*radius/resolution;float other=viewDepth(clamp(vUv+off,.001,.999));float delta=d-other;ao+=smoothstep(.012,.22,delta)*(1.-smoothstep(.35,4.,delta))*(ring==0?1.:.55);}}
+  color*=1.-ao*.026;
+  // Depth-reconstructed normal and a short screen-space reflection ray.
+  vec3 pos=viewPosition(vUv),normal=normalize(cross(dFdx(pos),dFdy(pos)));if(normal.z<0.)normal=-normal;vec3 ray=reflect(normalize(pos),normal),reflection=vec3(0.);float hit=0.;
+  float stride=max(.35,d*.018);for(int i=1;i<=14;i++){vec3 rp=pos+normal*.08+ray*stride*float(i);vec2 uv=projectView(rp);if(uv.x<=.002||uv.x>=.998||uv.y<=.002||uv.y>=.998)break;vec3 samplePos=viewPosition(uv);float thickness=max(.15,d*.006);if(abs(samplePos.z-rp.z)<thickness){reflection=texture2D(colorTex,uv).rgb;hit=1.;break;}}
+  float fresnel=pow(1.-clamp(dot(normalize(-pos),normal),0.,1.),3.);float chroma=max(color.r,max(color.g,color.b))-min(color.r,min(color.g,color.b));float reflective=smoothstep(.08,.42,chroma+dot(color,vec3(.12)));color=mix(color,reflection,hit*fresnel*reflective*.22);
+  // Thresholded highlight bloom with two radii.
+  vec3 bloom=vec3(0.);for(int i=0;i<12;i++){float a=float(i)*.523599;vec2 dir=vec2(cos(a),sin(a));for(int r=1;r<=2;r++){vec3 s=texture2D(colorTex,clamp(vUv+dir*float(r)*3.5/resolution,.001,.999)).rgb;float l=max(s.r,max(s.g,s.b));bloom+=s*smoothstep(1.,2.2,l)*(r==1?1.:.55);}}color+=bloom*.022;
+  float haze=smoothstep(farPlane*.035,farPlane*.55,d);color=mix(color,vec3(.55,.67,.72),haze*.18);vec2 q=vUv-.5;color*=1.-dot(q,q)*.16;
+  color=aces(color*exposure);color=pow(color,vec3(1./2.2));color=mix(vec3(dot(color,vec3(.2126,.7152,.0722))),color,1.08);gl_FragColor=vec4(color,1.);
+ }
  `});const postScene=new T.Scene(),postCamera=new T.Camera();postScene.add(new T.Mesh(new T.PlaneGeometry(2,2),material));let width=0,height=0;
- return {supported,render(){if(settings.quality==='low'||!supported){renderer.render(scene,camera);return;}const size=renderer.getDrawingBufferSize(new T.Vector2());if(size.x!==width||size.y!==height){width=size.x;height=size.y;target.setSize(width,height);uniforms.resolution.value.copy(size);}uniforms.nearPlane.value=camera.near;uniforms.farPlane.value=camera.far;renderer.info.autoReset=false;renderer.info.reset();renderer.setRenderTarget(target);renderer.render(scene,camera);renderer.setRenderTarget(null);renderer.render(postScene,postCamera);renderer.info.autoReset=true;},get size(){return[width,height];}};
+ return {supported,render(){if(settings.quality==='low'||!supported){renderer.render(scene,camera);return;}const size=renderer.getDrawingBufferSize(new T.Vector2());if(size.x!==width||size.y!==height){width=size.x;height=size.y;target.setSize(width,height);uniforms.resolution.value.copy(size);}uniforms.nearPlane.value=camera.near;uniforms.farPlane.value=camera.far;uniforms.projection.value.copy(camera.projectionMatrix);uniforms.projectionInverse.value.copy(camera.projectionMatrixInverse);renderer.info.autoReset=false;renderer.info.reset();renderer.setRenderTarget(target);renderer.render(scene,camera);renderer.setRenderTarget(null);renderer.render(postScene,postCamera);renderer.info.autoReset=true;},get size(){return[width,height];}};
 })();
